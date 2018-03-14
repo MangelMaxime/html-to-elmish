@@ -1,0 +1,34 @@
+source https://www.nuget.org/api/v2
+
+storage: none
+
+nuget FSharp.Core redirects:force
+nuget Fable.Core
+nuget Fable.Elmish prerelease
+nuget Fable.Elmish.React prerelease
+nuget Fable.Elmish.Browser prerelease
+nuget Fable.Elmish.Debugger prerelease
+nuget Fable.Elmish.HMR prerelease
+nuget Fable.PowerPack
+nuget Fable.React prerelease
+nuget Fulma prerelease
+nuget Fulma.Extensions prerelease
+
+github fable-compiler/ts2fable-exports:dev Monaco.fs
+
+clitool dotnet-fable
+
+group netcorebuild
+    storage:none
+    source https://www.nuget.org/api/v2
+    framework: netstandard2.0
+
+    nuget NETStandard.Library.NETFramework
+    nuget Fake.DotNet.Cli
+    nuget Fake.DotNet.Paket
+    nuget Fake.Core.Target
+    nuget Fake.Core.Process
+    nuget Fake.Core.String
+    nuget Fake.Core.ReleaseNotes
+    nuget Fake.IO.FileSystem
+    nuget Fake.Tools.Git

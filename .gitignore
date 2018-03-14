@@ -1,0 +1,11 @@
+node_modules/
+
+**/bin/
+**/obj/
+.DS_Store
+
+.fake/
+output/
+public/
+packages/
+paket-files/

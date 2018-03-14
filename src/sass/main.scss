@@ -1,0 +1,14 @@
+
+$body-size: 14px;
+
+@import './../../node_modules/bulma/bulma';
+
+html {
+    overflow-y: hidden;
+}
+
+.page-content {
+    height: calc(100vh - #{$navbar-height});
+    widows: 100%;
+    display: flex;
+}
