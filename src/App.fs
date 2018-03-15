@@ -2,54 +2,52 @@ module App
 
 open Elmish
 open Fable.Import
+open Fable.Core
 open Monaco
 
+type EditorState =
+    | Loading
+    | Loaded
+
 type Model =
-    { Temp : string }
+    { HtmlCode : string
+      HtmlEditorState : EditorState
+      FSharpEditorState : EditorState }
 
 let init _ =
-    { Temp = "" }, Cmd.none
+    { HtmlCode = ""
+      HtmlEditorState = Loading
+      FSharpEditorState = Loading }, Cmd.none
 
 type Msg =
-    | NoOp
+    | HtmlEditorLoaded
+    | FSharpEditorLoaded
+    | OnHtmlChange of string
 
 let update model =
     function
-    | NoOp -> model, Cmd.none
+    | OnHtmlChange htmlCode ->
+        { model with HtmlCode = htmlCode }, Cmd.none
 
+    | HtmlEditorLoaded ->
+        { model with HtmlEditorState = Loaded }, Cmd.none
+
+    | FSharpEditorLoaded ->
+        { model with FSharpEditorState = Loaded }, Cmd.none
 
 open Fable.Helpers.React
 open Fable.Helpers.React.Props
 open Fulma.Components
 open Fulma.Layouts
+open Fulma.Extensions
 
 let subView dispatch =
     (fun arg1 ->
         str "I am a subView"
     )
 
-// let createEditor(domElement) =
-
-//     let options = jsOptions<Monaco.Monaco.Editor.IEditorConstructionOptions>(fun o ->
-//         let minimapOptions =  jsOptions<Monaco.Editor.IEditorMinimapOptions>(fun oMinimap ->
-//             oMinimap.enabled <- Some false
-//         )
-//         o.language <- Some "html"
-//         o.fontSize <- Some 14.
-//         o.theme <- Some "vs-dark"
-//         o.value <- Some "<h1>Maxime</h1>"
-//         o.minimap <- Some minimapOptions
-//     )
-
-//     let services = createEmpty<Monaco.Editor.IEditorOverrideServices>
-//     let ed = Monaco.editor.create(domElement, options, services)
-//     ed
-
-// let mutable htmlEditor = Unchecked.defaultof<Monaco.Editor.IEditor>
-
 module Monaco =
 
-    open Fable.Core
     open Fable.Core.JsInterop
 
     type Props =
@@ -59,42 +57,54 @@ module Monaco =
         | DefaultValue of obj
         | Language of string
         | Theme of string
-        | Options  of Monaco.Monaco.Editor.IEditorConstructionOptions
+        | Options  of Monaco.Editor.IEditorConstructionOptions
         | OnChange of (obj * obj -> unit)
-        | EditorWillMount of (obj -> unit)
-        | EditorDidMount of (obj * obj -> unit)
+        | EditorWillMount of (Monaco.IExports -> unit)
+        | EditorDidMount of (Monaco.Editor.IEditor * Monaco.IExports -> unit)
         | RequireConfig of obj
 
     let inline editor (props: Props list) : React.ReactElement =
         ofImport "default" "react-monaco-editor" (keyValueList CaseRules.LowerFirst props) []
 
-open Fable.Core.JsInterop
+module Editor =
+
+    open Fable.Core.JsInterop
+
+    type Props =
+        | OnChange of (string -> unit)
+        | Value of string
+        | Language of string
+        | IsReadOnly of bool
+        | EditorDidMount of (unit -> unit)
+
+    let inline editor (props: Props list) : React.ReactElement =
+        ofImport "default" "./js/Editor.js" (keyValueList CaseRules.LowerFirst props) []
 
 let view dispatch =
     let subView = subView dispatch
-
-    let editorOptions = jsOptions<Monaco.Editor.IEditorConstructionOptions> (fun o ->
-        let minimapOptions = jsOptions<Monaco.Editor.IEditorMinimapOptions>(fun oMinimap ->
-                oMinimap.enabled <- Some false
-            )
-
-        o.minimap <- Some minimapOptions
-    )
-
     (fun model ->
+        let isLoading =
+            match model with
+            | { HtmlEditorState = Loading; FSharpEditorState = Loading } -> true
+            | _ -> false
+
         div [ ]
             [ Navbar.navbar [ Navbar.IsFixedTop ]
-                [ ]
+                [ Navbar.Brand.div [ ]
+                    [ str "Html to Elmish" ] ]
               div [ Class "page-content" ]
-                [ Monaco.editor [
-                      createObj [
-                          "url" ==> "/libs/requirejs/require.js"
-                          "paths" ==> createObj [
-                              "vs" ==> "/libs/vs"
-                          ]
-                      ] |> Monaco.RequireConfig
-                      Monaco.Options editorOptions
-                    ]
+                [ PageLoader.pageLoader [ PageLoader.IsActive isLoading ]
+                    [ ]
+                  Columns.columns [ Columns.IsGapless
+                                    Columns.Props [ Style [ CSSProp.Width "100%" ] ] ]
+                    [ Column.column [ ]
+                        [ Editor.editor [ Editor.OnChange (OnHtmlChange >> dispatch)
+                                          Editor.Value model.HtmlCode
+                                          Editor.EditorDidMount (fun _ -> dispatch HtmlEditorLoaded) ] ]
+                      Column.column [ ]
+                        [ Editor.editor [ Editor.Language "fsharp"
+                                          Editor.IsReadOnly true
+                                          Editor.EditorDidMount (fun _ -> dispatch FSharpEditorLoaded) ] ] ]
                 ]
             ]
     )

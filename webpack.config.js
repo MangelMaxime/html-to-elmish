@@ -17,7 +17,11 @@ var babelOptions = fableUtils.resolveBabelOptions({
                 "browsers": ["last 2 versions"]
             },
             "modules": false
-        }]
+        }],
+        "react"
+    ],
+    plugins: [
+        "transform-class-properties"
     ]
 });
 
