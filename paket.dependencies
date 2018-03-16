@@ -13,6 +13,7 @@ nuget Fable.PowerPack
 nuget Fable.React prerelease
 nuget Fulma prerelease
 nuget Fulma.Extensions prerelease
+nuget Fable.SimpleXml
 
 github fable-compiler/ts2fable-exports:dev Monaco.fs
 

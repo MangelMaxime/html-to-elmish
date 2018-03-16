@@ -16,9 +16,8 @@ open Fake.IO.FileSystemOperators
 System.Console.OutputEncoding <- System.Text.Encoding.UTF8
 #endif
 
-let sourceFile = "src/HtmlToElmish.fsproj"
-
 let jsLibsOutput = "public" </> "libs"
+let testsDist = "tests" </> "dist"
 
 let yarn args =
     let code =
@@ -39,6 +38,7 @@ Target.Create "Clean" (fun _ ->
     !! "**/bin"
     ++ "**/obj"
     ++ jsLibsOutput
+    ++ testsDist
     |> Shell.CleanDirs
 )
 
@@ -47,7 +47,9 @@ Target.Create "YarnInstall" (fun _ ->
 )
 
 Target.Create "Restore" (fun _ ->
-    DotNet.Restore id sourceFile
+    !! "src/HtmlToElmish.fsproj"
+    ++ "tests/Tests.fsproj"
+    |> Seq.iter (fun file -> DotNet.Restore id file)
 )
 
 Target.Create "Build" (fun _ ->
@@ -73,6 +75,31 @@ Target.Create "CopyMonacoModules" (fun _ ->
     Shell.cp_r ("./node_modules" </> "monaco-editor" </> "min" </> "vs") vsOutput
 )
 
+Target.Create "CopyQUnitModules" (fun _ ->
+    Directory.create testsDist
+    Shell.cp_r ("./node_modules" </> "qunitjs" </> "qunit") (testsDist </> "qunit")
+)
+
+Target.Create "RunLiveTests" (fun _ ->
+    let proc = DotNet.Exec (fun p ->
+                                { p with WorkingDirectory = "tests" } ) "fable" "yarn-run rollup --port free -- -c tests/rollup.config.js -w"
+
+    if proc.ExitCode <> 1 then
+        failwithf "Dotnet existed with code: %i\n Message: \n %A" proc.ExitCode proc.Messages
+)
+
+Target.Create "BuildTests" (fun _ ->
+    let proc = DotNet.Exec (fun p ->
+                                { p with WorkingDirectory = "tests" } ) "fable" "yarn-run rollup --port free -- -c tests/rollup.config.js"
+
+    if proc.ExitCode <> 1 then
+        failwithf "Dotnet existed with code: %i\n Message: \n %A" proc.ExitCode proc.Messages
+)
+
+Target.Create "RunTests" (fun _ ->
+    yarn "run qunit tests/bin/tests.bundle.js"
+)
+
 Target.RunOrDefault "Build"
 
 Target.Create "Setup" Target.DoNothing
@@ -84,7 +111,12 @@ Target.Create "Setup" Target.DoNothing
     ==> "Setup"
 
 "Setup"
-    ==> "Watch"
+    ==> "CopyQUnitModules"
+    ==> "RunLiveTests"
+
+"Setup"
+    ==> "BuildTests"
+    ==> "RunTests"
 
 "Setup"
     ==> "Build"

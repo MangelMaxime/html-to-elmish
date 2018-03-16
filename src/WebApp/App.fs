@@ -4,6 +4,7 @@ open Elmish
 open Fable.Import
 open Fable.Core
 open Monaco
+open Fable.SimpleXml
 
 type EditorState =
     | Loading
@@ -11,11 +12,17 @@ type EditorState =
 
 type Model =
     { HtmlCode : string
+      FSharpCode : string
       HtmlEditorState : EditorState
       FSharpEditorState : EditorState }
 
 let init _ =
-    { HtmlCode = ""
+    { HtmlCode = """<div class="container">
+  <div class="notification">
+    This container is <strong>centered</strong> on desktop.
+  </div>
+</div>"""
+      FSharpCode = ""
       HtmlEditorState = Loading
       FSharpEditorState = Loading }, Cmd.none
 
@@ -24,10 +31,52 @@ type Msg =
     | FSharpEditorLoaded
     | OnHtmlChange of string
 
+let attributesToString (indentationLevel : int) (attributes : Map<string,string>) =
+    let indentation = String.replicate indentationLevel "\t"
+
+    attributes
+    |> Map.toList
+    |> List.map (fun (key, value) ->
+        key + " " + value
+    )
+    |> String.concat ("\n" + indentation)
+    |> (fun str ->
+        "[ " + str + " ]"
+    )
+
+let rec xmlElementToElmish (indentationLevel : int) (xmlElement : XmlElement)  =
+    match xmlElement with
+    | { IsTextNode = true
+        Content = content } ->
+            "str \"" + content + "\""
+    | { Name = tagName
+        Attributes = attributes
+        Children = children } ->
+            let childrenStr =
+                children
+                |> List.map (xmlElementToElmish (indentationLevel + 1))
+                |> String.concat "\n"
+                |> (fun str ->
+                    "[ " + str + " ]"
+                )
+
+            let indentation = String.replicate indentationLevel "\t"
+
+            indentation + tagName + " " + (attributesToString indentationLevel attributes) + "\n" + childrenStr
+
 let update model =
     function
     | OnHtmlChange htmlCode ->
-        { model with HtmlCode = htmlCode }, Cmd.none
+        let newModel =
+            match SimpleXml.tryParseElement htmlCode with
+            | None ->
+                printfn "Failed to parse the htmlCode"
+                { model with HtmlCode = htmlCode }
+            | Some xmlElement ->
+                { model with HtmlCode = htmlCode
+                             FSharpCode = xmlElementToElmish 0 xmlElement }
+
+        newModel, Cmd.none
 
     | HtmlEditorLoaded ->
         { model with HtmlEditorState = Loaded }, Cmd.none
@@ -40,11 +89,6 @@ open Fable.Helpers.React.Props
 open Fulma.Components
 open Fulma.Layouts
 open Fulma.Extensions
-
-let subView dispatch =
-    (fun arg1 ->
-        str "I am a subView"
-    )
 
 module Monaco =
 
@@ -81,7 +125,6 @@ module Editor =
         ofImport "default" "./js/Editor.js" (keyValueList CaseRules.LowerFirst props) []
 
 let view dispatch =
-    let subView = subView dispatch
     (fun model ->
         let isLoading =
             match model with
@@ -104,6 +147,7 @@ let view dispatch =
                       Column.column [ ]
                         [ Editor.editor [ Editor.Language "fsharp"
                                           Editor.IsReadOnly true
+                                          Editor.Value model.FSharpCode
                                           Editor.EditorDidMount (fun _ -> dispatch FSharpEditorLoaded) ] ] ]
                 ]
             ]
