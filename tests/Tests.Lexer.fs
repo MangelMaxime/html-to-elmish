@@ -1,10 +1,10 @@
-module Tests.Tokenizer
+module Tests.Lexer
 
-open HtmlParser.Parser.Tokenizer
+open HtmlConverter.Parser.Lexer
 open QUnit
 
 let tests _ =
-    registerModule("HtmlParser.Parser.Tokenizer")
+    registerModule("HtmlConverter.Parser.Lexer")
 
     testCase "consumeToken `<` token" <| fun test ->
         consumeToken (LeftAngleBracket, "<") "<br/>"

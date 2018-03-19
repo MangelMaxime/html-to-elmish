@@ -1,3 +1,4 @@
 module Tests.Main
 
-Tests.Tokenizer.tests ()
+Tests.Lexer.tests ()
+Tests.Parser.tests ()

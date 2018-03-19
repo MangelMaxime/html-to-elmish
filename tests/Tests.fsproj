@@ -4,11 +4,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../src/HtmlParser/HtmlParser.fsproj" />
+    <ProjectReference Include="../src/HtmlConverter/HtmlConverter.fsproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="QUnit.fs" />
-    <Compile Include="Tests.Tokenizer.fs" />
+    <Compile Include="Tests.Lexer.fs" />
+    <Compile Include="Tests.Parser.fs" />
     <Compile Include="Main.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
