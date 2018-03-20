@@ -16,7 +16,7 @@ open Fake.IO.FileSystemOperators
 System.Console.OutputEncoding <- System.Text.Encoding.UTF8
 #endif
 
-let jsLibsOutput = "public" </> "libs"
+let jsLibsOutput = "src" </> "WebApp" </> "public" </> "libs"
 let testsDist = "tests" </> "dist"
 
 let yarn args =
@@ -54,14 +54,14 @@ Target.Create "Restore" (fun _ ->
 
 Target.Create "Build" (fun _ ->
     let proc = DotNet.Exec (fun p ->
-                                { p with WorkingDirectory = "src" } ) "fable" "webpack --port free -- -p"
+                                { p with WorkingDirectory = "src/WebApp" } ) "fable" "webpack --port free -- -p"
     if proc.ExitCode <> 1 then
         failwithf "Dotnet existed with code: %i\n Message: \n %A" proc.ExitCode proc.Messages
 )
 
 Target.Create "Watch" (fun _ ->
     let proc = DotNet.Exec (fun p ->
-                                { p with WorkingDirectory = "src" } ) "fable" "webpack-dev-server --port free"
+                                { p with WorkingDirectory = "src/WebApp" } ) "fable" "webpack-dev-server --port free"
     if proc.ExitCode <> 1 then
         failwithf "Dotnet existed with code: %i\n Message: \n %A" proc.ExitCode proc.Messages
 )
@@ -82,7 +82,7 @@ Target.Create "CopyQUnitModules" (fun _ ->
 
 Target.Create "RunLiveTests" (fun _ ->
     let proc = DotNet.Exec (fun p ->
-                                { p with WorkingDirectory = "tests" } ) "fable" "yarn-run rollup --port free -- -c tests/rollup.config.js -w"
+                                { p with WorkingDirectory = "tests" } ) "fable" "yarn-run webpack-dev-server --port free"
 
     if proc.ExitCode <> 1 then
         failwithf "Dotnet existed with code: %i\n Message: \n %A" proc.ExitCode proc.Messages
@@ -90,7 +90,7 @@ Target.Create "RunLiveTests" (fun _ ->
 
 Target.Create "BuildTests" (fun _ ->
     let proc = DotNet.Exec (fun p ->
-                                { p with WorkingDirectory = "tests" } ) "fable" "yarn-run rollup --port free -- -c tests/rollup.config.js"
+                                { p with WorkingDirectory = "tests" } ) "fable" "yarn-run webpack --port free -- -p"
 
     if proc.ExitCode <> 1 then
         failwithf "Dotnet existed with code: %i\n Message: \n %A" proc.ExitCode proc.Messages

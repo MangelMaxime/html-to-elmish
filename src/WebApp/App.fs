@@ -4,7 +4,7 @@ open Elmish
 open Fable.Import
 open Fable.Core
 open Monaco
-open Fable.SimpleXml
+open HtmlConverter.Converter
 
 type EditorState =
     | Loading
@@ -31,52 +31,17 @@ type Msg =
     | FSharpEditorLoaded
     | OnHtmlChange of string
 
-let attributesToString (indentationLevel : int) (attributes : Map<string,string>) =
-    let indentation = String.replicate indentationLevel "\t"
-
-    attributes
-    |> Map.toList
-    |> List.map (fun (key, value) ->
-        key + " " + value
-    )
-    |> String.concat ("\n" + indentation)
-    |> (fun str ->
-        "[ " + str + " ]"
-    )
-
-let rec xmlElementToElmish (indentationLevel : int) (xmlElement : XmlElement)  =
-    match xmlElement with
-    | { IsTextNode = true
-        Content = content } ->
-            "str \"" + content + "\""
-    | { Name = tagName
-        Attributes = attributes
-        Children = children } ->
-            let childrenStr =
-                children
-                |> List.map (xmlElementToElmish (indentationLevel + 1))
-                |> String.concat "\n"
-                |> (fun str ->
-                    "[ " + str + " ]"
-                )
-
-            let indentation = String.replicate indentationLevel "\t"
-
-            indentation + tagName + " " + (attributesToString indentationLevel attributes) + "\n" + childrenStr
-
 let update model =
     function
     | OnHtmlChange htmlCode ->
         let newModel =
-            match SimpleXml.tryParseElement htmlCode with
-            | None ->
-                printfn "Failed to parse the htmlCode"
-                { model with HtmlCode = htmlCode }
-            | Some xmlElement ->
-                { model with HtmlCode = htmlCode
-                             FSharpCode = xmlElementToElmish 0 xmlElement }
+            match htmlToElmsh htmlCode with
+            | Ok fsharpCode ->
+                { model with FSharpCode = fsharpCode }
+            | Error error ->
+                { model with FSharpCode = error }
 
-        newModel, Cmd.none
+        { newModel  with HtmlCode = htmlCode }, Cmd.none
 
     | HtmlEditorLoaded ->
         { model with HtmlEditorState = Loaded }, Cmd.none

@@ -91,7 +91,7 @@ type Asserter =
     [<Emit("$0.propEqual($1, $2)")>]
     abstract propEqual : 'a -> 'b -> unit
     [<Emit("$0.deepEqual($1, $2)")>]
-    abstract deepEqual : 'expected -> 'actual -> unit
+    abstract deepEqual : 'a -> 'a -> unit
 [<Emit("QUnit.module($0)")>]
 let registerModule (name: string) : unit = jsNative
 [<Emit("QUnit.module($0, $1)")>]

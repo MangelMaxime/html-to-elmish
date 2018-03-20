@@ -4,6 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+        <ProjectReference Include="./../HtmlConverter/HtmlConverter.fsproj" />
+    </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\..\paket-files\fable-compiler\ts2fable-exports\Monaco.fs">
       <Paket>True</Paket>
       <Link>paket-files/Monaco.fs</Link>

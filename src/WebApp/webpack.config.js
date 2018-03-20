@@ -31,7 +31,7 @@ console.log("Bundling for " + (isProduction ? "production" : "development") + ".
 var commonPlugins = [
     new HtmlWebpackPlugin({
         filename: resolve('./output/index.html'),
-        template: resolve('./src/index.html')
+        template: resolve('index.html')
     })
 ];
 
@@ -42,16 +42,16 @@ module.exports = {
         {
             app: [
                 "babel-polyfill",
-                resolve('./src/HtmlToElmish.fsproj'),
-                resolve('./src/sass/main.scss')
+                resolve('HtmlToElmish.fsproj'),
+                resolve('sass/main.scss')
             ]
         } : {
             app: [
                 "babel-polyfill",
-                resolve('./src/HtmlToElmish.fsproj')
+                resolve('HtmlToElmish.fsproj')
             ],
             style: [
-                resolve('./src/sass/main.scss')
+                resolve('sass/main.scss')
             ]
         },
     output: {
@@ -72,7 +72,7 @@ module.exports = {
     resolve: {
         modules: [
             "node_modules/",
-            resolve("./node_modules/")
+            resolve("./../../node_modules/")
         ]
     },
     devServer: {
