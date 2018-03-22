@@ -8,8 +8,6 @@ class Editor extends React.Component {
     }
 
     editorDidMount = (editor, monaco) => {
-        // console.log('editorDidMount', editor);
-        // editor.focus();
         this.props.editorDidMount();
     }
 
@@ -20,6 +18,7 @@ class Editor extends React.Component {
     render() {
         const options = {
             selectOnLineNumbers: true,
+            lineNumbers: false,
             readOnly: this.props.isReadOnly,
             minimap: {
                 enabled: false

@@ -1,4 +1,4 @@
-module App
+module App.Main
 
 open Elmish
 open Fable.Import
@@ -14,34 +14,28 @@ type Model =
     { HtmlCode : string
       FSharpCode : string
       HtmlEditorState : EditorState
-      FSharpEditorState : EditorState }
-
-let init _ =
-    { HtmlCode = """<div class="container">
-  <div class="notification">
-    This container is <strong>centered</strong> on desktop.
-  </div>
-</div>"""
-      FSharpCode = ""
-      HtmlEditorState = Loading
-      FSharpEditorState = Loading }, Cmd.none
+      FSharpEditorState : EditorState
+      Navbar : App.Navbar.Model }
 
 type Msg =
     | HtmlEditorLoaded
     | FSharpEditorLoaded
     | OnHtmlChange of string
+    | NavbarMsg of App.Navbar.Msg
+    | UpdateFSharpCode
+
+let init _ =
+    let (navbarModel, navbarMsg) = App.Navbar.init ()
+    { HtmlCode = ""
+      FSharpCode = ""
+      HtmlEditorState = Loading
+      FSharpEditorState = Loading
+      Navbar = navbarModel }, Cmd.map NavbarMsg navbarMsg
 
 let update model =
     function
     | OnHtmlChange htmlCode ->
-        let newModel =
-            match htmlToElmsh htmlCode with
-            | Ok fsharpCode ->
-                { model with FSharpCode = fsharpCode }
-            | Error error ->
-                { model with FSharpCode = error }
-
-        { newModel  with HtmlCode = htmlCode }, Cmd.none
+        { model with HtmlCode = htmlCode}, Cmd.ofMsg UpdateFSharpCode
 
     | HtmlEditorLoaded ->
         { model with HtmlEditorState = Loaded }, Cmd.none
@@ -49,11 +43,36 @@ let update model =
     | FSharpEditorLoaded ->
         { model with FSharpEditorState = Loaded }, Cmd.none
 
+    | NavbarMsg navbarMsg ->
+        let (navbarModel, navbarMsg, externalMessage) = App.Navbar.update model.Navbar navbarMsg
+
+        let newModel, extraMsg =
+            match externalMessage with
+            | App.Navbar.ExternalMsg.NoOp -> model, Cmd.none
+
+            | App.Navbar.ExternalMsg.LoadSample htmlCode ->
+                { model with HtmlCode = htmlCode }, Cmd.ofMsg UpdateFSharpCode
+
+            | App.Navbar.ExternalMsg.ConfigChanged ->
+                model, Cmd.ofMsg UpdateFSharpCode
+
+        { newModel with Navbar = navbarModel }, Cmd.batch [ Cmd.map NavbarMsg navbarMsg
+                                                            extraMsg ]
+
+    | UpdateFSharpCode ->
+        { model with FSharpCode =
+                        htmlToElmish
+                            model.Navbar.Config.IndentationSize
+                            model.Navbar.Config.IndentWith
+                            model.HtmlCode }, Cmd.none
+
+
 open Fable.Helpers.React
 open Fable.Helpers.React.Props
 open Fulma.Components
 open Fulma.Layouts
 open Fulma.Extensions
+open Fulma.BulmaClasses
 
 module Monaco =
 
@@ -89,7 +108,10 @@ module Editor =
     let inline editor (props: Props list) : React.ReactElement =
         ofImport "default" "./js/Editor.js" (keyValueList CaseRules.LowerFirst props) []
 
+
+
 let view dispatch =
+    let viewNavbar = App.Navbar.view (NavbarMsg >> dispatch)
     (fun model ->
         let isLoading =
             match model with
@@ -97,19 +119,30 @@ let view dispatch =
             | _ -> false
 
         div [ ]
-            [ Navbar.navbar [ Navbar.IsFixedTop ]
-                [ Navbar.Brand.div [ ]
-                    [ str "Html to Elmish" ] ]
+            [ viewNavbar model.Navbar
               div [ Class "page-content" ]
                 [ PageLoader.pageLoader [ PageLoader.IsActive isLoading ]
                     [ ]
                   Columns.columns [ Columns.IsGapless
-                                    Columns.Props [ Style [ CSSProp.Width "100%" ] ] ]
-                    [ Column.column [ ]
+                                    Columns.IsMultiline ]
+                    [ Column.column [ Column.Width(Column.All, Column.IsHalf) ]
+                        [ Message.message [ ]
+                            [ Message.body [ ]
+                                [ div [ ClassName Bulma.Properties.Alignment.HasTextCentered ]
+                                    [ str "Type or paste HTML code" ] ] ] ]
+                      Column.column [ Column.Width(Column.All, Column.IsHalf) ]
+                        [ Message.message [ ]
+                            [ Message.body [ ]
+                                [ div [ ClassName Bulma.Properties.Alignment.HasTextCentered ]
+                                    [ str "F# code compatible with Elmish" ] ] ] ] ]
+                  Columns.columns [ Columns.IsGapless
+                                    Columns.IsMultiline
+                                    Columns.Props [ Style [ Height "100%" ] ] ]
+                    [ Column.column [ Column.Width(Column.All, Column.IsHalf) ]
                         [ Editor.editor [ Editor.OnChange (OnHtmlChange >> dispatch)
                                           Editor.Value model.HtmlCode
                                           Editor.EditorDidMount (fun _ -> dispatch HtmlEditorLoaded) ] ]
-                      Column.column [ ]
+                      Column.column [ Column.Width(Column.All, Column.IsHalf) ]
                         [ Editor.editor [ Editor.Language "fsharp"
                                           Editor.IsReadOnly true
                                           Editor.Value model.FSharpCode

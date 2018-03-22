@@ -1,4 +1,6 @@
+@import "./../../node_modules/bulma/sass/utilities/initial-variables";
 
+// Bulma customization
 $body-size: 14px;
 
 @import './../../node_modules/bulma/bulma';
@@ -10,6 +12,9 @@ html {
 
 .page-content {
     height: calc(100vh - #{$navbar-height});
-    widows: 100%;
-    display: flex;
+}
+
+// Overwrite, monaco style to make the code center compare to the Message box
+.monaco-scrollable-element {
+    left: 5px !important;
 }

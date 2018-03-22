@@ -37,6 +37,7 @@
     "babel-polyfill": "^6.26.0",
     "bulma": "^0.6.2",
     "font-awesome": "^4.7.0",
+    "htmlparser2": "^3.9.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-monaco-editor": "^0.13.0"

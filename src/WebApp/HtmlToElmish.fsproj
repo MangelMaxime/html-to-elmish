@@ -1,16 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-        <ProjectReference Include="./../HtmlConverter/HtmlConverter.fsproj" />
-    </ItemGroup>
+    <ProjectReference Include="./../HtmlConverter/HtmlConverter.fsproj" />
+  </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\paket-files\fable-compiler\ts2fable-exports\Monaco.fs">
+    <Compile Include="../../paket-files/fable-compiler/ts2fable-exports/Monaco.fs">
       <Paket>True</Paket>
       <Link>paket-files/Monaco.fs</Link>
     </Compile>
+    <Compile Include="Navbar.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />

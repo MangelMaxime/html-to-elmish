@@ -54,131 +54,163 @@ let tests _ =
     testCase "attributesToString: one attribute" <| fun test ->
         let result =
             [ "class", "button" ]
-            |> Map.ofList
-            |> attributesToString 0 0
+            |> attributesToString
 
-        test.equal
+        test.deepEqual
             result
-            """[ Class "button" ]"""
+            [ "Class \"button\"" ]
 
     testCase "attributesToString: unkown attributes are converted to HTMLAttr.Custom" <| fun test ->
         let result =
             [ "customAttribute", "button" ]
-            |> Map.ofList
-            |> attributesToString 0 0
+            |> attributesToString
 
-        test.equal
+        test.deepEqual
             result
-            """[ HTMLAttr.Custom (customAttribute, "button") ]"""
+            [ "HTMLAttr.Custom (\"customAttribute\", \"button\")" ]
 
     testCase "attributesToString: several attributes" <| fun test ->
         let result =
             [ "class", "button"
               "onClick", "button"
               "height", "50" ]
-            |> Map.ofList
-            |> attributesToString 0 0
+            |> attributesToString
 
-        test.equal
+        test.deepEqual
             result
-            """[ Class "button"
-  Height 50
-  OnClick (fun _ -> ()) ]"""
-
-    testCase "attributesToString: several attributes with offset" <| fun test ->
-        let result =
-            [ "class", "button"
-              "onClick", "button"
-              "height", "50" ]
-            |> Map.ofList
-            |> attributesToString 0 4
-
-        test.equal
-            result
-            """[ Class "button"
-      Height 50
-      OnClick (fun _ -> ()) ]"""
+            [ "Class \"button\""
+              "OnClick (fun _ -> ())"
+              "Height 50" ]
 
     testCase "simple tag" <| fun test ->
-        htmlToElmsh "<div></div>"
-        |> function
-            | Ok result ->
-                test.equal
-                    result
-                    """div [ ]
+        let result = htmlToElmish 4 " " "<div></div>"
+
+        test.equal
+            result
+            """div [ ]
     [ ]"""
-            | Error msg -> test.unexpected msg
 
     testCase "self-closing tag" <| fun test ->
-        htmlToElmsh "<br/>"
-        |> function
-            | Ok result ->
-                test.equal
-                    result
-                    "br [ ]"
-            | Error msg -> test.unexpected msg
+        let result = htmlToElmish 4 " " "<br/>"
+        test.equal
+            result
+            "br [ ]"
 
     testCase "tag with one attribute" <| fun test ->
-        htmlToElmsh """<div class="button"></div>"""
-        |> function
-            | Ok result ->
-                test.equal
-                    result
-                    """div [ Class "button" ]
+        let result =
+            htmlToElmish 4 " " """<div class="button"></div>"""
+
+        test.equal
+            result
+            """div [ Class "button" ]
     [ ]"""
-            | Error msg -> test.unexpected msg
 
     testCase "tag with several attributes" <| fun test ->
-        htmlToElmsh """<div class="button" height="50" onClick="onClick();"></div>"""
-        |> function
-            | Ok result ->
-                test.equal
-                    result
-                    """div [ Class "button"
+        let result =
+            htmlToElmish 4 " " """<div class="button" height="50" onClick="onClick();"></div>"""
+
+        test.equal
+            result
+            """div [ Class "button"
       Height 50
       OnClick (fun _ -> ()) ]
     [ ]"""
-            | Error msg -> test.unexpected msg
 
-    testCase "nested children" <| fun test ->
-        htmlToElmsh """<div>
-    <span>Hello, </span>
-    <span>Maxime</span>
-</div>"""
-        |> function
-            | Ok result ->
-                test.equal
-                    result
-                    """div [ ]
-    [ span [ ]
-        [ str "Hello, " ]
-      span [ ]
-        [ str "Maxime" ] ]"""
-            | Error msg -> test.unexpected msg
-
-    testCase "nested children with inline text tag" <| fun test ->
-        htmlToElmsh """<div class="container">
-    <div class="notification">
-        This container is <strong>centered</strong> on desktop.
+    testCase "nested tag with several attributes" <| fun test ->
+        let result =
+            htmlToElmish 4 " " """<div class="button" height="50">
+    <div class="button" height="50">
+        <div class="button" height="50">
+            Maxime
+        </div>
     </div>
 </div>"""
-        |> function
-            | Ok result ->
-                test.equal
-                    """div [ Class "container" ]
-    [ div [ Class "notification" ]
-        [ str "This container is "
-          strong [ ]
-            [ str "centered" ]
-          str " on desktop." ] ]"""
-                    result
-            | Error msg -> test.unexpected msg
 
-    testCase "self closing withouth backslash" <| fun test ->
-        htmlToElmsh """<input name="firstname">"""
-        |> function
-            | Ok result ->
-                test.equal
-                    """input [ Name "firstname"]"""
-                    result
-            | Error msg -> test.unexpected msg
+        test.equal
+            result
+            """div [ Class "button"
+      Height 50 ]
+    [ div [ Class "button"
+            Height 50 ]
+        [ div [ Class "button"
+                Height 50 ]
+            [ str "Maxime" ] ] ]"""
+
+    testCase "nested children" <| fun test ->
+        let result =
+            htmlToElmish 4 " "
+                """<div>
+    <span>Hello,</span>
+    <span>Maxime</span>
+</div>"""
+
+        test.equal
+            result
+            """div [ ]
+    [ span [ ]
+        [ str "Hello," ]
+      span [ ]
+        [ str "Maxime" ] ]"""
+
+    testCase "nested children with inline text tag" <| fun test ->
+        let result =
+            htmlToElmish 4 " "
+                """<div class="container">
+    <div class="notification">
+        This container is <strong>centered</strong>
+    </div>
+</div>"""
+
+        test.equal
+            result
+            """div [ Class "container" ]
+    [ div [ Class "notification" ]
+        [ str "This container is"
+          strong [ ]
+            [ str "centered" ] ] ]"""
+
+
+    testCase "self closing without backslash" <| fun test ->
+        let result =
+            htmlToElmish 4 " " """<input name="firstname">"""
+
+        test.equal
+            result
+            """input [ Name "firstname" ]"""
+
+    testCase "If the text is not the first or second child of it's parent and previous tag is self closing" <| fun test ->
+        let result =
+            htmlToElmish 4 " " """<p>
+    <span>texte n°1</span>
+    <span>texte n°2</span>
+    <br>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.
+</p>"""
+        test.equal
+            result
+            """p [ ]
+    [ span [ ]
+        [ str "texte n°1" ]
+      span [ ]
+        [ str "texte n°2" ]
+      br [ ]
+      str "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis." ]"""
+
+    testCase "If the text is the second child of it's parent and previous tag is self closing" <| fun test ->
+        let result =
+            htmlToElmish 4 " " """<div><input type="checkbox"> Press enter to submit</div>"""
+
+        test.equal
+            result
+            """div [ ]
+    [ input [ Type "checkbox" ]
+      str "Press enter to submit" ]"""
+
+    testCase "If the text is the first children of it's parent" <| fun test ->
+        let result =
+            htmlToElmish 4 " " """<div>my text here</div>"""
+
+        test.equal
+            result
+            """div [ ]
+    [ str "my text here" ]"""
