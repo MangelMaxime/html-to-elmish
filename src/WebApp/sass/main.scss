@@ -1,10 +1,10 @@
-@import "./../../node_modules/bulma/sass/utilities/initial-variables";
+@import "./../../../node_modules/bulma/sass/utilities/initial-variables";
 
 // Bulma customization
 $body-size: 14px;
 
-@import './../../node_modules/bulma/bulma';
-@import './../../node_modules/bulma-pageloader/dist/bulma-pageloader';
+@import './../../../node_modules/bulma/bulma';
+@import './../../../node_modules/bulma-pageloader/dist/bulma-pageloader';
 
 html {
     overflow-y: hidden;
