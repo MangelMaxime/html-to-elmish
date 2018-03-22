@@ -69,6 +69,7 @@ let update model =
 
 open Fable.Helpers.React
 open Fable.Helpers.React.Props
+open Fulma
 open Fulma.Components
 open Fulma.Layouts
 open Fulma.Extensions
@@ -121,8 +122,10 @@ let view dispatch =
         div [ ]
             [ viewNavbar model.Navbar
               div [ Class "page-content" ]
-                [ PageLoader.pageLoader [ PageLoader.IsActive isLoading ]
-                    [ ]
+                [ PageLoader.pageLoader [ PageLoader.IsActive isLoading
+                                          PageLoader.Color IsWhite ]
+                    [ span [ Class "title" ]
+                        [ str "We are getting everything ready for you" ] ]
                   Columns.columns [ Columns.IsGapless
                                     Columns.IsMultiline ]
                     [ Column.column [ Column.Width(Column.All, Column.IsHalf) ]
