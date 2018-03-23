@@ -1,46 +1,4 @@
-module App.Navbar
-
-open Elmish
-
-type Config =
-    { IndentationSize : int
-      IndentWith : string }
-
-type Model =
-    { Config : Config }
-
-type Msg =
-    | ChangeIndentationSize of int
-    | UseSpaces
-    | UseTabulation
-    | ChooseSample of string
-
-type ExternalMsg =
-    | NoOp
-    | LoadSample of string
-    | ConfigChanged
-
-let init _ =
-    { Config =
-        { IndentationSize = 4
-          IndentWith = " " } }, Cmd.none
-
-let update model =
-    function
-    | ChangeIndentationSize newSize ->
-        { model with Config =
-                        { model.Config with IndentationSize = newSize } }, Cmd.none, ConfigChanged
-
-    | UseSpaces ->
-        { model with Config =
-                        { model.Config with IndentWith = " " } }, Cmd.none, ConfigChanged
-
-    | UseTabulation ->
-        { model with Config =
-                        { model.Config with IndentWith = "\t" } }, Cmd.none, ConfigChanged
-
-    | ChooseSample sampleCode ->
-        model, Cmd.none, LoadSample sampleCode
+module Samples
 
 let helloWorld =
     """<span>Hello world</span>"""
@@ -169,31 +127,3 @@ let boostrapNavbar =
     </form>
   </div>
 </nav>"""
-
-open Fable.Helpers.React
-open Fable.Helpers.React.Props
-open Fulma.Components
-
-let private navbarItem dispatch =
-    fun text sampleCode ->
-        Navbar.Item.a [ Navbar.Item.Props [ OnClick (fun _ -> ChooseSample sampleCode |> dispatch)] ]
-            [ str text ]
-
-let view dispatch =
-    let viewNavbarItem = navbarItem dispatch
-    fun model ->
-        Navbar.navbar [ Navbar.IsFixedTop ]
-            [ Navbar.Brand.div [ ]
-                [ Navbar.Item.a [ ]
-                    [ strong [ ]
-                        [ str "Html to Elmish" ] ] ]
-              Navbar.Item.div [ Navbar.Item.HasDropdown
-                                Navbar.Item.IsHoverable ]
-                [ Navbar.Link.a [ ]
-                    [ str "Samples" ]
-                  Navbar.Dropdown.div [ ]
-                    [ viewNavbarItem "Hello world" helloWorld
-                      viewNavbarItem "Bootstrap: Navbar" boostrapNavbar
-                      viewNavbarItem "Fulma: Box" fulmaBox
-                      viewNavbarItem "Fulma: Media Object" fulmaMediaObject
-                      viewNavbarItem "Foundation: Top Bar" foundationTopBar ] ] ]

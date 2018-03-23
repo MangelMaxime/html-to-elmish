@@ -83,7 +83,7 @@ let tests _ =
               "Height 50" ]
 
     testCase "simple tag" <| fun test ->
-        let result = htmlToElmish 4 " " "<div></div>"
+        let result = htmlToElmish "<div></div>"
 
         test.equal
             result
@@ -91,14 +91,14 @@ let tests _ =
     [ ]"""
 
     testCase "self-closing tag" <| fun test ->
-        let result = htmlToElmish 4 " " "<br/>"
+        let result = htmlToElmish "<br/>"
         test.equal
             result
             "br [ ]"
 
     testCase "tag with one attribute" <| fun test ->
         let result =
-            htmlToElmish 4 " " """<div class="button"></div>"""
+            htmlToElmish """<div class="button"></div>"""
 
         test.equal
             result
@@ -107,7 +107,7 @@ let tests _ =
 
     testCase "tag with several attributes" <| fun test ->
         let result =
-            htmlToElmish 4 " " """<div class="button" height="50" onClick="onClick();"></div>"""
+            htmlToElmish """<div class="button" height="50" onClick="onClick();"></div>"""
 
         test.equal
             result
@@ -118,7 +118,7 @@ let tests _ =
 
     testCase "nested tag with several attributes" <| fun test ->
         let result =
-            htmlToElmish 4 " " """<div class="button" height="50">
+            htmlToElmish """<div class="button" height="50">
     <div class="button" height="50">
         <div class="button" height="50">
             Maxime
@@ -138,7 +138,7 @@ let tests _ =
 
     testCase "nested children" <| fun test ->
         let result =
-            htmlToElmish 4 " "
+            htmlToElmish
                 """<div>
     <span>Hello,</span>
     <span>Maxime</span>
@@ -154,7 +154,7 @@ let tests _ =
 
     testCase "nested children with inline text tag" <| fun test ->
         let result =
-            htmlToElmish 4 " "
+            htmlToElmish
                 """<div class="container">
     <div class="notification">
         This container is <strong>centered</strong>
@@ -172,7 +172,7 @@ let tests _ =
 
     testCase "self closing without backslash" <| fun test ->
         let result =
-            htmlToElmish 4 " " """<input name="firstname">"""
+            htmlToElmish """<input name="firstname">"""
 
         test.equal
             result
@@ -180,7 +180,7 @@ let tests _ =
 
     testCase "If the text is not the first or second child of it's parent and previous tag is self closing" <| fun test ->
         let result =
-            htmlToElmish 4 " " """<p>
+            htmlToElmish """<p>
     <span>texte n°1</span>
     <span>texte n°2</span>
     <br>
@@ -198,7 +198,7 @@ let tests _ =
 
     testCase "If the text is the second child of it's parent and previous tag is self closing" <| fun test ->
         let result =
-            htmlToElmish 4 " " """<div><input type="checkbox"> Press enter to submit</div>"""
+            htmlToElmish """<div><input type="checkbox"> Press enter to submit</div>"""
 
         test.equal
             result
@@ -208,7 +208,7 @@ let tests _ =
 
     testCase "If the text is the first children of it's parent" <| fun test ->
         let result =
-            htmlToElmish 4 " " """<div>my text here</div>"""
+            htmlToElmish """<div>my text here</div>"""
 
         test.equal
             result

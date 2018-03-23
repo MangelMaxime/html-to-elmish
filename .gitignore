@@ -5,7 +5,8 @@ node_modules/
 .DS_Store
 
 .fake/
-output/
-public/
+src/WebApp/output/
+src/WebApp/public/
 packages/
 paket-files/
+tests/dist/

@@ -58,12 +58,33 @@ module.exports = {
         path: resolve('./output'),
         filename: isProduction ? '[name].[hash].js' : '[name].js'
     },
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                commons: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendor',
+                    chunks: 'all'
+                },
+                fable: {
+                    test: /[\\/]fable-core[\\/]/,
+                    name: 'fable',
+                    chunks: 'all'
+                }
+            }
+        }
+    },
     plugins: isProduction ?
         commonPlugins.concat([
             new ExtractTextPlugin('style.[contenthash].css'),
             new CopyWebpackPlugin([
                 { from: './public' }
-            ])
+            ]),
+            // ensure that we get a production build of any dependencies
+            // this is primarily for React, where this removes 179KB from the bundle
+            new webpack.DefinePlugin({
+                'process.env.NODE_ENV': '"production"'
+            })
         ])
         : commonPlugins.concat([
             new webpack.HotModuleReplacementPlugin(),

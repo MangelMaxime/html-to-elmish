@@ -1,18 +1,28 @@
 import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
 import PropTypes from 'prop-types';
+import ReactResizeDetector from 'react-resize-detector';
+
 
 class Editor extends React.Component {
+    editor = null;
+
     constructor(props) {
         super(props);
     }
 
     editorDidMount = (editor, monaco) => {
         this.props.editorDidMount();
+        this.editor = editor;
     }
 
     onChange = (newValue, e) => {
         this.props.onChange(newValue);
+    }
+
+    onResize = () => {
+        if (this.editor !== null)
+            this.editor.layout();
     }
 
     render() {
@@ -31,14 +41,17 @@ class Editor extends React.Component {
             }
         };
         return (
-            <MonacoEditor
-                language={this.props.language}
-                value={this.props.value}
-                options={options}
-                onChange={this.onChange}
-                editorDidMount={this.editorDidMount}
-                requireConfig={requireConfig}
-            />
+            <div style={{height: '100%', overflow: 'hidden'}}>
+                <ReactResizeDetector handleWidth handleHeight onResize={this.onResize} />
+                <MonacoEditor
+                    language={this.props.language}
+                    value={this.props.value}
+                    options={options}
+                    onChange={this.onChange}
+                    editorDidMount={this.editorDidMount}
+                    requireConfig={requireConfig}
+                />
+            </div>
         );
     }
 }

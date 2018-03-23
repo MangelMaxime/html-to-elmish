@@ -14,23 +14,19 @@ type Model =
     { HtmlCode : string
       FSharpCode : string
       HtmlEditorState : EditorState
-      FSharpEditorState : EditorState
-      Navbar : App.Navbar.Model }
+      FSharpEditorState : EditorState }
 
 type Msg =
     | HtmlEditorLoaded
     | FSharpEditorLoaded
     | OnHtmlChange of string
-    | NavbarMsg of App.Navbar.Msg
     | UpdateFSharpCode
 
 let init _ =
-    let (navbarModel, navbarMsg) = App.Navbar.init ()
     { HtmlCode = ""
       FSharpCode = ""
       HtmlEditorState = Loading
-      FSharpEditorState = Loading
-      Navbar = navbarModel }, Cmd.map NavbarMsg navbarMsg
+      FSharpEditorState = Loading }, Cmd.none
 
 let update model =
     function
@@ -43,29 +39,9 @@ let update model =
     | FSharpEditorLoaded ->
         { model with FSharpEditorState = Loaded }, Cmd.none
 
-    | NavbarMsg navbarMsg ->
-        let (navbarModel, navbarMsg, externalMessage) = App.Navbar.update model.Navbar navbarMsg
-
-        let newModel, extraMsg =
-            match externalMessage with
-            | App.Navbar.ExternalMsg.NoOp -> model, Cmd.none
-
-            | App.Navbar.ExternalMsg.LoadSample htmlCode ->
-                { model with HtmlCode = htmlCode }, Cmd.ofMsg UpdateFSharpCode
-
-            | App.Navbar.ExternalMsg.ConfigChanged ->
-                model, Cmd.ofMsg UpdateFSharpCode
-
-        { newModel with Navbar = navbarModel }, Cmd.batch [ Cmd.map NavbarMsg navbarMsg
-                                                            extraMsg ]
-
     | UpdateFSharpCode ->
         { model with FSharpCode =
-                        htmlToElmish
-                            model.Navbar.Config.IndentationSize
-                            model.Navbar.Config.IndentWith
-                            model.HtmlCode }, Cmd.none
-
+                        htmlToElmish model.HtmlCode }, Cmd.none
 
 open Fable.Helpers.React
 open Fable.Helpers.React.Props
@@ -109,10 +85,32 @@ module Editor =
     let inline editor (props: Props list) : React.ReactElement =
         ofImport "default" "./js/Editor.js" (keyValueList CaseRules.LowerFirst props) []
 
+let private navbarItem dispatch =
+    fun text sampleCode ->
+        Navbar.Item.a [ Navbar.Item.Props [ OnClick (fun _ -> OnHtmlChange sampleCode |> dispatch)] ]
+            [ str text ]
 
+let private navbar dispatch =
+    let viewNavbarItem = navbarItem dispatch
+    fun _ ->
+        Navbar.navbar [ Navbar.IsFixedTop ]
+            [ Navbar.Brand.div [ ]
+                [ Navbar.Item.a [ ]
+                    [ strong [ ]
+                        [ str "Html to Elmish" ] ] ]
+              Navbar.Item.div [ Navbar.Item.HasDropdown
+                                Navbar.Item.IsHoverable ]
+                [ Navbar.Link.a [ ]
+                    [ str "Samples" ]
+                  Navbar.Dropdown.div [ ]
+                    [ viewNavbarItem "Hello world" Samples.helloWorld
+                      viewNavbarItem "Bootstrap: Navbar" Samples.boostrapNavbar
+                      viewNavbarItem "Fulma: Box" Samples.fulmaBox
+                      viewNavbarItem "Fulma: Media Object" Samples.fulmaMediaObject
+                      viewNavbarItem "Foundation: Top Bar" Samples.foundationTopBar ] ] ]
 
 let view dispatch =
-    let viewNavbar = App.Navbar.view (NavbarMsg >> dispatch)
+    let viewNavbar = navbar dispatch
     (fun model ->
         let isLoading =
             match model with
@@ -120,7 +118,7 @@ let view dispatch =
             | _ -> false
 
         div [ ]
-            [ viewNavbar model.Navbar
+            [ viewNavbar ()
               div [ Class "page-content" ]
                 [ PageLoader.pageLoader [ PageLoader.IsActive isLoading
                                           PageLoader.Color IsWhite ]

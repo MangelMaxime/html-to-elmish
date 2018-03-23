@@ -5,8 +5,11 @@ open Thot.Json
 open Fable.Core.JsInterop
 open System
 
-let indent (depth : int) (size : int) (text : string)  =
-    String.replicate (depth * size) text
+let [<Literal>] INDENT_WITH = " "
+let [<Literal>] INDENT_SIZE = 4
+
+let indent (depth : int) =
+    String.replicate (depth * INDENT_SIZE) INDENT_WITH
 
 let escapeValue (typ : References.AttributeType) (value : string) =
     match typ with
@@ -80,8 +83,7 @@ let countFirstOccurenceSize (getStr : string) (chkdChar : char) =
         else count
     loop 0 0
 
-let htmlToElmish (indentSize : int) (indentWith : string) (htmlCode : string) =
-
+let htmlToElmish (htmlCode : string) =
     let mutable fsharpCode = ""
     let mutable depth = -1
     let context = Dictionary<int, bool>()
@@ -95,7 +97,7 @@ let htmlToElmish (indentSize : int) (indentWith : string) (htmlCode : string) =
 
             depth <- depth + 1
             if context.[depth] then
-                fsharpCode <- fsharpCode + "\n" + (indent depth indentSize indentWith) + " "
+                fsharpCode <- fsharpCode + "\n" + (indent depth) + " "
             else
                 context.[depth] <- true
 
@@ -107,7 +109,7 @@ let htmlToElmish (indentSize : int) (indentWith : string) (htmlCode : string) =
             let trimed = lastRow.Trim()
             if trimed.StartsWith("[") && trimed.Length <> 1 then
                 fsharpCode <- fsharpCode.TrimEnd()
-                fsharpCode <- fsharpCode + "\n" + String.replicate (countFirstOccurenceSize lastRow ' ' + 2) " "
+                fsharpCode <- fsharpCode + "\n" + String.replicate (countFirstOccurenceSize lastRow ' ' + 2) INDENT_WITH
 
             // Add tag name
             fsharpCode <- fsharpCode + name
@@ -139,7 +141,7 @@ let htmlToElmish (indentSize : int) (indentWith : string) (htmlCode : string) =
 
             // If the tag can haev children open the bracket
             if not (List.contains name voidElements) then
-                fsharpCode <- fsharpCode + "\n" + (indent (depth + 1) indentSize indentWith) + "["
+                fsharpCode <- fsharpCode + "\n" + (indent (depth + 1)) + "["
 
         handler.ontext <- Some <| fun rawText ->
             let text = rawText.Trim()

@@ -35,8 +35,10 @@ let yarn args =
         ()
 
 Target.Create "Clean" (fun _ ->
-    !! "**/bin"
-    ++ "**/obj"
+    !! "src/**/bin"
+    ++ "src/**/obj"
+    ++ "tests/**/bin"
+    ++ "tests/**/obj"
     ++ jsLibsOutput
     ++ testsDist
     |> Shell.CleanDirs
@@ -47,7 +49,7 @@ Target.Create "YarnInstall" (fun _ ->
 )
 
 Target.Create "Restore" (fun _ ->
-    !! "src/HtmlToElmish.fsproj"
+    !! "src/**/*.fsproj"
     ++ "tests/Tests.fsproj"
     |> Seq.iter (fun file -> DotNet.Restore id file)
 )
@@ -55,15 +57,15 @@ Target.Create "Restore" (fun _ ->
 Target.Create "Build" (fun _ ->
     let proc = DotNet.Exec (fun p ->
                                 { p with WorkingDirectory = "src/WebApp" } ) "fable" "webpack --port free -- -p"
-    if proc.ExitCode <> 1 then
-        failwithf "Dotnet existed with code: %i\n Message: \n %A" proc.ExitCode proc.Messages
+    if proc.ExitCode <> 0 then
+        failwithf "Dotnet existed with code: %i\n" proc.ExitCode
 )
 
 Target.Create "Watch" (fun _ ->
     let proc = DotNet.Exec (fun p ->
-                                { p with WorkingDirectory = "src/WebApp" } ) "fable" "webpack-dev-server --port free"
-    if proc.ExitCode <> 1 then
-        failwithf "Dotnet existed with code: %i\n Message: \n %A" proc.ExitCode proc.Messages
+                                { p with WorkingDirectory = "src/WebApp" } ) "fable" "webpack-dev-server --port free --"
+    if proc.ExitCode <> 0 then
+        failwithf "Dotnet existed with code: %i\n" proc.ExitCode
 )
 
 Target.Create "CopyMonacoModules" (fun _ ->
@@ -82,27 +84,27 @@ Target.Create "CopyQUnitModules" (fun _ ->
 
 Target.Create "RunLiveTests" (fun _ ->
     let proc = DotNet.Exec (fun p ->
-                                { p with WorkingDirectory = "tests" } ) "fable" "yarn-run webpack-dev-server --port free"
+                                { p with WorkingDirectory = "tests" } ) "fable" "yarn-run webpack-dev-server --port free -- --config tests/webpack.config.js"
 
-    if proc.ExitCode <> 1 then
-        failwithf "Dotnet existed with code: %i\n Message: \n %A" proc.ExitCode proc.Messages
+    if proc.ExitCode <> 0 then
+        failwithf "Dotnet existed with code: %i\n" proc.ExitCode
 )
 
 Target.Create "BuildTests" (fun _ ->
     let proc = DotNet.Exec (fun p ->
-                                { p with WorkingDirectory = "tests" } ) "fable" "yarn-run webpack --port free -- -p"
+                                { p with WorkingDirectory = "tests" } ) "fable" "yarn-run webpack --port free -- -p --config tests/webpack.config.js"
 
-    if proc.ExitCode <> 1 then
-        failwithf "Dotnet existed with code: %i\n Message: \n %A" proc.ExitCode proc.Messages
+    if proc.ExitCode <> 0 then
+        failwithf "Dotnet existed with code: %i\n" proc.ExitCode
 )
 
 Target.Create "RunTests" (fun _ ->
-    yarn "run qunit tests/bin/tests.bundle.js"
+    yarn "run qunit tests/dist/bundle.js"
 )
 
-Target.RunOrDefault "Build"
-
 Target.Create "Setup" Target.DoNothing
+
+Target.Create "Release" Target.DoNothing
 
 "Clean"
     ==> "YarnInstall"
@@ -115,8 +117,19 @@ Target.Create "Setup" Target.DoNothing
     ==> "RunLiveTests"
 
 "Setup"
+    ==> "Watch"
+
+// A "Release" include a "Setup"
+"Setup"
+    ==> "Release"
+
+"Setup"
     ==> "BuildTests"
     ==> "RunTests"
 
-"Setup"
-    ==> "Build"
+// A "Release" include a "RunTests"
+"RunTests"
+    ==> "Release"
+
+// Start build
+Target.RunOrDefault "Build"
