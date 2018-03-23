@@ -35,9 +35,9 @@ class Editor extends React.Component {
             }
         };
         const requireConfig = {
-            url:  "/libs/requirejs/require.js",
+            url:  "libs/requirejs/require.js",
             paths: {
-                vs: "/libs/vs"
+                vs: "libs/vs"
             }
         };
         return (

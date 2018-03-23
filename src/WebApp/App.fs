@@ -4,6 +4,7 @@ open Elmish
 open Fable.Import
 open Fable.Core
 open Monaco
+open Fable.PowerPack
 open HtmlConverter.Converter
 
 type EditorState =
@@ -47,9 +48,11 @@ open Fable.Helpers.React
 open Fable.Helpers.React.Props
 open Fulma
 open Fulma.Components
+open Fulma.Elements
 open Fulma.Layouts
 open Fulma.Extensions
 open Fulma.BulmaClasses
+open Fulma.Extra.FontAwesome
 
 module Monaco =
 
@@ -85,6 +88,16 @@ module Editor =
     let inline editor (props: Props list) : React.ReactElement =
         ofImport "default" "./js/Editor.js" (keyValueList CaseRules.LowerFirst props) []
 
+module CopyButton =
+
+    open Fable.Core.JsInterop
+
+    type Props =
+        | Value of string
+
+    let inline copyButtton (props: Props list) : React.ReactElement =
+        ofImport "default" "./js/CopyButton.js" (keyValueList CaseRules.LowerFirst props) []
+
 let private navbarItem dispatch =
     fun text sampleCode ->
         Navbar.Item.a [ Navbar.Item.Props [ OnClick (fun _ -> OnHtmlChange sampleCode |> dispatch)] ]
@@ -98,16 +111,25 @@ let private navbar dispatch =
                 [ Navbar.Item.a [ ]
                     [ strong [ ]
                         [ str "Html to Elmish" ] ] ]
-              Navbar.Item.div [ Navbar.Item.HasDropdown
-                                Navbar.Item.IsHoverable ]
-                [ Navbar.Link.a [ ]
-                    [ str "Samples" ]
-                  Navbar.Dropdown.div [ ]
-                    [ viewNavbarItem "Hello world" Samples.helloWorld
-                      viewNavbarItem "Bootstrap: Navbar" Samples.boostrapNavbar
-                      viewNavbarItem "Fulma: Box" Samples.fulmaBox
-                      viewNavbarItem "Fulma: Media Object" Samples.fulmaMediaObject
-                      viewNavbarItem "Foundation: Top Bar" Samples.foundationTopBar ] ] ]
+              Navbar.Start.div [ ]
+                [ Navbar.Item.div [ Navbar.Item.HasDropdown
+                                    Navbar.Item.IsHoverable ]
+                    [ Navbar.Link.a [ ]
+                        [ str "Samples" ]
+                      Navbar.Dropdown.div [ ]
+                        [ viewNavbarItem "Hello world" Samples.helloWorld
+                          viewNavbarItem "Bootstrap: Navbar" Samples.boostrapNavbar
+                          viewNavbarItem "Fulma: Box" Samples.fulmaBox
+                          viewNavbarItem "Fulma: Media Object" Samples.fulmaMediaObject
+                          viewNavbarItem "Foundation: Top Bar" Samples.foundationTopBar ] ] ]
+              Navbar.End.div [ ]
+                [ Navbar.Item.div [ ]
+                    [ Button.a [ Button.Props [ Href "https://github.com/MangelMaxime/html-to-elmish" ]
+                                 Button.Color IsDark ]
+                        [ Icon.faIcon [ ]
+                            [ Fa.icon Fa.I.Github ]
+                          span [ ]
+                            [ str "Github" ] ] ] ] ]
 
 let view dispatch =
     let viewNavbar = navbar dispatch
@@ -144,7 +166,9 @@ let view dispatch =
                                           Editor.Value model.HtmlCode
                                           Editor.EditorDidMount (fun _ -> dispatch HtmlEditorLoaded) ] ]
                       Column.column [ Column.Width(Column.All, Column.IsHalf) ]
-                        [ Editor.editor [ Editor.Language "fsharp"
+                        [ div [ Class "copy-button" ]
+                            [ CopyButton.copyButtton [ CopyButton.Value model.FSharpCode ] ]
+                          Editor.editor [ Editor.Language "fsharp"
                                           Editor.IsReadOnly true
                                           Editor.Value model.FSharpCode
                                           Editor.EditorDidMount (fun _ -> dispatch FSharpEditorLoaded) ] ] ]

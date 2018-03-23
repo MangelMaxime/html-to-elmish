@@ -39,6 +39,7 @@ Target.Create "Clean" (fun _ ->
     ++ "src/**/obj"
     ++ "tests/**/bin"
     ++ "tests/**/obj"
+    ++ "src/WebApp/output"
     ++ jsLibsOutput
     ++ testsDist
     |> Shell.CleanDirs
@@ -102,9 +103,11 @@ Target.Create "RunTests" (fun _ ->
     yarn "run qunit tests/dist/bundle.js"
 )
 
-Target.Create "Setup" Target.DoNothing
+Target.Create "Release" (fun _ ->
+    yarn "run gh-pages --dist src/WebApp/output"
+)
 
-Target.Create "Release" Target.DoNothing
+Target.Create "Setup" Target.DoNothing
 
 "Clean"
     ==> "YarnInstall"
@@ -119,9 +122,9 @@ Target.Create "Release" Target.DoNothing
 "Setup"
     ==> "Watch"
 
-// A "Release" include a "Setup"
+// A "Build" include a "Setup"
 "Setup"
-    ==> "Release"
+    ==> "Build"
 
 "Setup"
     ==> "BuildTests"
@@ -129,6 +132,9 @@ Target.Create "Release" Target.DoNothing
 
 // A "Release" include a "RunTests"
 "RunTests"
+    ==> "Release"
+
+"Build"
     ==> "Release"
 
 // Start build
