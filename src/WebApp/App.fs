@@ -4,7 +4,6 @@ open Elmish
 open Fable.Import
 open Fable.Core
 open Monaco
-open Fable.PowerPack
 open HtmlConverter.Converter
 
 type EditorState =
@@ -47,12 +46,9 @@ let update model =
 open Fable.Helpers.React
 open Fable.Helpers.React.Props
 open Fulma
-open Fulma.Components
-open Fulma.Elements
-open Fulma.Layouts
 open Fulma.Extensions
 open Fulma.BulmaClasses
-open Fulma.Extra.FontAwesome
+open Fulma.FontAwesome
 
 module Monaco =
 

@@ -1,5 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <Description>Html to Elmish converter</Description>
+    <PackageProjectUrl>https://github.com/MangelMaxime/Html-to-Elmish</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/MangelMaxime/Html-to-Elmish</RepositoryUrl>
+    <PackageTags>fable;elm;fsharp;bulma</PackageTags>
+    <Authors>Maxime Mangel</Authors>
+  </PropertyGroup>
+  <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>

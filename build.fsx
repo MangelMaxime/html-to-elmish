@@ -21,7 +21,7 @@ let testsDist = "tests" </> "dist"
 
 let yarn args =
     let code =
-        Process.Exec
+        Process.execSimple
             (fun info ->
                 { info with
                     FileName = "yarn"
@@ -34,7 +34,7 @@ let yarn args =
     else
         ()
 
-Target.Create "Clean" (fun _ ->
+Target.create "Clean" (fun _ ->
     !! "src/**/bin"
     ++ "src/**/obj"
     ++ "tests/**/bin"
@@ -45,31 +45,31 @@ Target.Create "Clean" (fun _ ->
     |> Shell.CleanDirs
 )
 
-Target.Create "YarnInstall" (fun _ ->
+Target.create "YarnInstall" (fun _ ->
     yarn "install"
 )
 
-Target.Create "Restore" (fun _ ->
+Target.create "Restore" (fun _ ->
     !! "src/**/*.fsproj"
     ++ "tests/Tests.fsproj"
-    |> Seq.iter (fun file -> DotNet.Restore id file)
+    |> Seq.iter (fun file -> DotNet.restore id file)
 )
 
-Target.Create "Build" (fun _ ->
-    let proc = DotNet.Exec (fun p ->
+Target.create "Build" (fun _ ->
+    let proc = DotNet.exec (fun p ->
                                 { p with WorkingDirectory = "src/WebApp" } ) "fable" "webpack --port free -- -p"
     if proc.ExitCode <> 0 then
         failwithf "Dotnet existed with code: %i\n" proc.ExitCode
 )
 
-Target.Create "Watch" (fun _ ->
-    let proc = DotNet.Exec (fun p ->
+Target.create "Watch" (fun _ ->
+    let proc = DotNet.exec (fun p ->
                                 { p with WorkingDirectory = "src/WebApp" } ) "fable" "webpack-dev-server --port free --"
     if proc.ExitCode <> 0 then
         failwithf "Dotnet existed with code: %i\n" proc.ExitCode
 )
 
-Target.Create "CopyMonacoModules" (fun _ ->
+Target.create "CopyMonacoModules" (fun _ ->
     let requireJsOutput = jsLibsOutput </> "requirejs"
     let vsOutput = jsLibsOutput </> "vs"
     Directory.create requireJsOutput
@@ -78,36 +78,36 @@ Target.Create "CopyMonacoModules" (fun _ ->
     Shell.cp_r ("./node_modules" </> "monaco-editor" </> "min" </> "vs") vsOutput
 )
 
-Target.Create "CopyQUnitModules" (fun _ ->
+Target.create "CopyQUnitModules" (fun _ ->
     Directory.create testsDist
     Shell.cp_r ("./node_modules" </> "qunitjs" </> "qunit") (testsDist </> "qunit")
 )
 
-Target.Create "RunLiveTests" (fun _ ->
-    let proc = DotNet.Exec (fun p ->
+Target.create "RunLiveTests" (fun _ ->
+    let proc = DotNet.exec (fun p ->
                                 { p with WorkingDirectory = "tests" } ) "fable" "yarn-run webpack-dev-server --port free -- --config tests/webpack.config.js"
 
     if proc.ExitCode <> 0 then
         failwithf "Dotnet existed with code: %i\n" proc.ExitCode
 )
 
-Target.Create "BuildTests" (fun _ ->
-    let proc = DotNet.Exec (fun p ->
+Target.create "BuildTests" (fun _ ->
+    let proc = DotNet.exec (fun p ->
                                 { p with WorkingDirectory = "tests" } ) "fable" "yarn-run webpack --port free -- -p --config tests/webpack.config.js"
 
     if proc.ExitCode <> 0 then
         failwithf "Dotnet existed with code: %i\n" proc.ExitCode
 )
 
-Target.Create "RunTests" (fun _ ->
+Target.create "RunTests" (fun _ ->
     yarn "run qunit tests/dist/bundle.js"
 )
 
-Target.Create "Release" (fun _ ->
+Target.create "Release" (fun _ ->
     yarn "run gh-pages --dist src/WebApp/output"
 )
 
-Target.Create "Setup" Target.DoNothing
+Target.create "Setup" Target.DoNothing
 
 "Clean"
     ==> "YarnInstall"
@@ -138,4 +138,4 @@ Target.Create "Setup" Target.DoNothing
     ==> "Release"
 
 // Start build
-Target.RunOrDefault "Build"
+Target.runOrDefault "Build"

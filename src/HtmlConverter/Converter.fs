@@ -1,7 +1,7 @@
 module HtmlConverter.Converter
 
 open System.Collections.Generic
-open Thot.Json
+open Thoth.Json
 open Fable.Core.JsInterop
 open System
 
