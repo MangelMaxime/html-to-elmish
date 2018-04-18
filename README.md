@@ -1,4 +1,5 @@
-# Html to Elmish
+# Html to Elmish [![Build status](https://ci.appveyor.com/api/projects/status/a9atdqi3pkcd755y/branch/master?svg=true)](https://ci.appveyor.com/project/MangelMaxime/html-to-elmish/branch/master)
+
 
 ## How to build ?
 
