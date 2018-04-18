@@ -10,6 +10,7 @@ open Fake.DotNet
 open Fake.IO
 open Fake.IO.Globbing.Operators
 open Fake.IO.FileSystemOperators
+open Fake.JavaScript
 
 #if MONO
 // prevent incorrect output encoding (e.g. https://github.com/fsharp/FAKE/issues/1196)
@@ -18,21 +19,6 @@ System.Console.OutputEncoding <- System.Text.Encoding.UTF8
 
 let jsLibsOutput = "src" </> "WebApp" </> "public" </> "libs"
 let testsDist = "tests" </> "dist"
-
-let yarn args =
-    let code =
-        Process.execSimple
-            (fun info ->
-                { info with
-                    FileName = "yarn"
-                    Arguments = args
-                }
-            )
-            (TimeSpan.FromMinutes 10.)
-    if code <> 0 then
-        failwithf "Yarn exited with code: %i" code
-    else
-        ()
 
 Target.create "Clean" (fun _ ->
     !! "src/**/bin"
@@ -46,7 +32,7 @@ Target.create "Clean" (fun _ ->
 )
 
 Target.create "YarnInstall" (fun _ ->
-    yarn "install"
+    Yarn.install id
 )
 
 Target.create "Restore" (fun _ ->
@@ -100,14 +86,16 @@ Target.create "BuildTests" (fun _ ->
 )
 
 Target.create "RunTests" (fun _ ->
-    yarn "run qunit tests/dist/bundle.js"
+    Yarn.exec "run qunit tests/dist/bundle.js" id
 )
 
 Target.create "Release" (fun _ ->
-    yarn "run gh-pages --dist src/WebApp/output"
+    Yarn.exec "run gh-pages --dist src/WebApp/output" id
 )
 
 Target.create "Setup" Target.DoNothing
+
+Target.create "CI" Target.DoNothing
 
 "Clean"
     ==> "YarnInstall"
@@ -136,6 +124,10 @@ Target.create "Setup" Target.DoNothing
 
 "Build"
     ==> "Release"
+
+"CI"
+    <== [ "Build"
+          "RunTests"]
 
 // Start build
 Target.runOrDefault "Build"

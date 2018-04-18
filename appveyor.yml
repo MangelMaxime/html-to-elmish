@@ -7,8 +7,7 @@ install:
   - ps: Install-Product node 8 x64
 
 build_script:
-    - cmd: fake.cmd build -t RunTests
-    - cmd: fake.cmd build
+    - cmd: fake.cmd build -t CI
 
 cache:
 - "%LOCALAPPDATA%\\Yarn"
