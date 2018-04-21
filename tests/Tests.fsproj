@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../src/HtmlConverter/HtmlConverter.fsproj" />
+    <ProjectReference Include="../src/HtmlConverter/Fable.HtmlConverter.fsproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="QUnit.fs" />

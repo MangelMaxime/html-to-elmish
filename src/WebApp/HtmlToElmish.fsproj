@@ -8,7 +8,7 @@
       <Paket>True</Paket>
       <Link>paket-files/Monaco.fs</Link>
     </Compile>
-    <ProjectReference Include="./../HtmlConverter/HtmlConverter.fsproj" />
+    <ProjectReference Include="./../HtmlConverter/Fable.HtmlConverter.fsproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Samples.fs" />
