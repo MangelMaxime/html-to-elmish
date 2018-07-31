@@ -43,6 +43,8 @@ module String =
 
 let indentationSize = 4
 
+let [<Literal>] PREFIX_DATA_ATTRIBUTE  = "data-"
+
 let attributesToString (attributes : (string * string) list) : string list =
     attributes
     |> List.map (fun (key, value) ->
@@ -54,7 +56,10 @@ let attributesToString (attributes : (string * string) list) : string list =
             | Some (fsharpName, _, typ) ->
                 fsharpName + " " + (escapeValue typ value)
             | None ->
-                "HTMLAttr.Custom (\"" + key + "\", " + (escapeValue References.AttributeType.String value) + ")"
+                if key.Contains(PREFIX_DATA_ATTRIBUTE) then
+                    "HTMLAttr.Data(\"" + key.Substring(PREFIX_DATA_ATTRIBUTE.Length) + "\", " + (escapeValue References.AttributeType.String value) + ")"
+                else
+                    "HTMLAttr.Custom (\"" + key + "\", " + (escapeValue References.AttributeType.String value) + ")"
     )
 
 let private voidElements : string list =
