@@ -2,9 +2,9 @@ const path = require("path");
 const webpack = require("webpack");
 const fableUtils = require("fable-utils");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 function resolve(filePath) {
     return path.join(__dirname, filePath)
@@ -32,6 +32,55 @@ var commonPlugins = [
     new HtmlWebpackPlugin({
         filename: resolve('./output/index.html'),
         template: resolve('index.html')
+    }),
+    new MonacoWebpackPlugin({
+        languages: [
+            "fsharp",
+            "html",
+            "css",
+            "javascript"
+        ],
+        features: [
+            'accessibilityHelp',
+            'bracketMatching',
+            'caretOperations',
+            'clipboard',
+            'codelens',
+            'colorDetector',
+            'comment',
+            'contextmenu',
+            // 'coreCommands',
+            'cursorUndo',
+            // 'dnd',
+            'find',
+            // 'folding',
+            // 'format',
+            'gotoDeclarationCommands',
+            'gotoDeclarationMouse',
+            'gotoError',
+            'gotoLine',
+            'hover',
+            'inPlaceReplace',
+            'inspectTokens',
+            // 'iPadShowKeyboard',
+            'linesOperations',
+            'links',
+            'multicursor',
+            'parameterHints',
+            // 'quickCommand',
+            // 'quickFixCommands',
+            // 'quickOutline',
+            // 'referenceSearch',
+            // 'rename',
+            'smartSelect',
+            // 'snippets',
+            'suggest',
+            'toggleHighContrast',
+            'toggleTabFocusMode',
+            'transpose',
+            'wordHighlighter',
+            'wordOperations'
+        ]
     })
 ];
 
@@ -76,7 +125,9 @@ module.exports = {
     },
     plugins: isProduction ?
         commonPlugins.concat([
-            new ExtractTextPlugin('style.[contenthash].css'),
+            new MiniCssExtractPlugin({
+                filename: 'style.[hash].css'
+            }),
             new CopyWebpackPlugin([
                 { from: './public' }
             ]),
@@ -125,18 +176,12 @@ module.exports = {
                 },
             },
             {
-                test: /\.s(a|c)ss$/,
-                use: isProduction ?
-                    ExtractTextPlugin.extract({
-                        fallback: 'style-loader',
-                        //resolve-url-loader may be chained before sass-loader if necessary
-                        use: ['css-loader', 'sass-loader']
-                    })
-                    : ["style-loader", "css-loader", "sass-loader"]
-            },
-            {
-                test: /\.css$/,
-                use: ['style-loader', 'css-loader']
+                test:  /\.(sass|scss|css)$/,
+                use: [
+                    isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
+                    'css-loader',
+                    'sass-loader',
+                ],
             },
             {
                 test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)(\?.*$|$)/,

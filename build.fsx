@@ -1,5 +1,9 @@
 #r "paket: groupref netcorebuild //"
 #load ".fake/build.fsx/intellisense.fsx"
+#if !FAKE
+#r "Facades/netstandard"
+#r "netstandard"
+#endif
 
 open System
 open System.IO
@@ -40,7 +44,7 @@ Target.create "Clean" (fun _ ->
     ++ "src/WebApp/output"
     ++ jsLibsOutput
     ++ testsDist
-    |> Shell.CleanDirs
+    |> Shell.cleanDirs
 )
 
 Target.create "YarnInstall" (fun _ ->
@@ -167,9 +171,9 @@ Target.create "PublishNugets" (fun _ ->
     )
 )
 
-Target.create "Setup" Target.DoNothing
+Target.create "Setup" ignore
 
-Target.create "CI" Target.DoNothing
+Target.create "CI" ignore
 
 "Clean"
     ==> "YarnInstall"

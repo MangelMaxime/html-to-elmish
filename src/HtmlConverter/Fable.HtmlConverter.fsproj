@@ -6,7 +6,7 @@
     <RepositoryUrl>https://github.com/MangelMaxime/Html-to-Elmish</RepositoryUrl>
     <PackageTags>fable;fsharp</PackageTags>
     <Authors>Maxime Mangel</Authors>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
   </PropertyGroup>
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -15,6 +15,9 @@
     <Compile Include="htmlparser2.fs" />
     <Compile Include="References.fs" />
     <Compile Include="Converter.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="*.fsproj; **\*.fs" PackagePath="fable\" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
