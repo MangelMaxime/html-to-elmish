@@ -45,7 +45,9 @@ let indentationSize = 4
 
 let [<Literal>] PREFIX_DATA_ATTRIBUTE  = "data-"
 
-let attributesToString (attributes : (string * string) list) : string list =
+let [<Literal>] PREFIX_STYLE_HTML_ATTR = "Style [ "
+
+let attributesToString (attributes : (string * string) list) (depth : int) (currentRow : string) : string list =
     attributes
     |> List.map (fun (key, value) ->
         References.attributes
@@ -58,6 +60,46 @@ let attributesToString (attributes : (string * string) list) : string list =
             | None ->
                 if key.Contains(PREFIX_DATA_ATTRIBUTE) then
                     "HTMLAttr.Data(\"" + key.Substring(PREFIX_DATA_ATTRIBUTE.Length) + "\", " + (escapeValue References.AttributeType.String value) + ")"
+                elif key = "style" then
+                    value.Split(';')
+                    |> Array.filter (String.IsNullOrWhiteSpace >> not)
+                    |> Array.map(fun style ->
+                        match style.Split(':') with
+                        | [| styleProp; styleValue |] ->
+                            // Clean whitespaces spaces
+                            let styleProp = styleProp.Trim()
+                            let styleValue = styleValue.Trim()
+                            // Convert into PascalCase
+                            let stylePropPascalCase =
+                                styleProp.Split('-')
+                                |> Array.map(fun str ->
+                                    str.[..0].ToUpperInvariant() + str.[1..]
+                                )
+                                |> String.concat ""
+
+                            // If the pascalCaseVersion is known, then use it
+                            // Otherwise, use a the custom case
+                            match Array.contains stylePropPascalCase References.cssProps with
+                            | true -> stylePropPascalCase + " " + (escapeValue References.AttributeType.String styleValue)
+                            | false -> "CSSProp.Custom (\"" + styleProp + "\", " + (escapeValue References.AttributeType.String styleValue) + ")"
+
+                        | invalid ->
+                            invalid
+                            |> String.concat ":"
+                            |> String.prefix "invalid_css: "
+                    )
+                    |> Array.mapi (fun index str ->
+                        if index = 0 then
+                            str
+                        else
+                            let lastIndex = currentRow.LastIndexOf '['
+                            String.replicate (lastIndex + 2) " "
+                                + String.replicate (PREFIX_STYLE_HTML_ATTR.Length) " "
+                                + str
+                    )
+                    |> String.concat "\n"
+                    |> String.prefix PREFIX_STYLE_HTML_ATTR
+                    |> String.suffix " ]"
                 else
                     "HTMLAttr.Custom (\"" + key + "\", " + (escapeValue References.AttributeType.String value) + ")"
     )
@@ -124,7 +166,7 @@ let htmlToElmish (htmlCode : string) =
             // If we have some attributes
             if attributes.Length > 0 then
                 let attrs =
-                    attributesToString attributes
+                    attributesToString attributes depth (fsharpCode.Split('\n') |> Array.last)
                     |> List.mapi (fun index attr ->
                         if index = 0 then
                             " " + attr

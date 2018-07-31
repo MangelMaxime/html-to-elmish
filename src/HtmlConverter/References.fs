@@ -228,3 +228,44 @@ let attributes : (FSharpName * HtmlName * AttributeType) list =
     //   "Data", "data" of string * obj
     //| Custom of string * obj
        ]
+
+let cssProps : string array =
+    [| "AlignContent"; "AlignItems"; "AlignSelf"; "AlignmentAdjust"; "AlignmentBaseline"; "All"; "Animation"; "AnimationDelay"; "AnimationDirection"; "AnimationDuration";
+      "AnimationFillMode"; "AnimationIterationCount"; "AnimationName"; "AnimationPlayState"; "AnimationTimingFunction"; "Appearance"; "BackfaceVisibility"; "Background";
+      "BackgroundAttachment"; "BackgroundBlendMode"; "BackgroundClip"; "BackgroundColor"; "BackgroundComposite"; "BackgroundImage"; "BackgroundOrigin"; "BackgroundPosition";
+      "BackgroundPositionX"; "BackgroundPositionY"; "BackgroundRepeat"; "BackgroundSize"; "BaselineShift"; "Behavior"; "BlockSize"; "Border"; "BorderBlockEnd"; "BorderBlockEndColor";
+      "BorderBlockEndStyle"; "BorderBlockEndWidth"; "BorderBlockStart"; "BorderBlockStartColor"; "BorderBlockStartStyle"; "BorderBlockStartWidth"; "BorderBottom"; "BorderBottomColor";
+      "BorderBottomLeftRadius"; "BorderBottomRightRadius"; "BorderBottomStyle"; "BorderBottomWidth"; "BorderCollapse"; "BorderColor"; "BorderCornerShape"; "BorderImage";
+      "BorderImageOutset"; "BorderImageRepeat"; "BorderImageSlice"; "BorderImageSource"; "BorderImageWidth"; "BorderInlineEnd"; "BorderInlineEndColor"; "BorderInlineEndStyle";
+      "BorderInlineEndWidth"; "BorderInlineStart"; "BorderInlineStartColor"; "BorderInlineStartStyle"; "BorderInlineStartWidth"; "BorderLeft"; "BorderLeftColor"; "BorderLeftStyle";
+      "BorderLeftWidth"; "BorderRadius"; "BorderRight"; "BorderRightColor"; "BorderRightStyle"; "BorderRightWidth"; "BorderSpacing"; "BorderStyle"; "BorderTop"; "BorderTopColor";
+      "BorderTopLeftRadius"; "BorderTopRightRadius"; "BorderTopStyle"; "BorderTopWidth"; "BorderWidth"; "Bottom"; "BoxAlign"; "BoxDecorationBreak"; "BoxDirection"; "BoxFlex";
+      "BoxFlexGroup"; "BoxLineProgression"; "BoxLines"; "BoxOrdinalGroup"; "BoxShadow"; "BoxSizing"; "BreakAfter"; "BreakBefore"; "BreakInside"; "CaptionSide"; "CaretColor"; "Clear";
+      "Clip"; "ClipPath"; "ClipRule"; "Color"; "ColorInterpolation"; "ColorInterpolationFilters"; "ColorProfile"; "ColorRendering"; "ColumnCount"; "ColumnFill"; "ColumnGap"; "ColumnRule";
+      "ColumnRuleColor"; "ColumnRuleStyle"; "ColumnRuleWidth"; "ColumnSpan"; "ColumnWidth"; "Columns"; "Content"; "CounterIncrement"; "CounterReset"; "Cue"; "CueAfter"; "Cursor"; "Direction";
+      "Display"; "DominantBaseline"; "EmptyCells"; "EnableBackground"; "Fill"; "FillOpacity"; "FillRule"; "Filter"; "Flex"; "FlexAlign"; "FlexBasis"; "FlexDirection"; "FlexFlow"; "FlexGrow";
+      "FlexItemAlign"; "FlexLinePack"; "FlexOrder"; "FlexShrink"; "FlexWrap"; "Float"; "FloodColor"; "FloodOpacity"; "FlowFrom"; "Font"; "FontFamily"; "FontFeatureSettings"; "FontKerning";
+      "FontLanguageOverride"; "FontSize"; "FontSizeAdjust"; "FontStretch"; "FontStyle"; "FontSynthesis"; "FontVariant"; "FontVariantAlternates"; "FontVariantCaps"; "FontVariantEastAsian";
+      "FontVariantLigatures"; "FontVariantNumeric"; "FontVariantPosition"; "FontWeight"; "GlyphOrientationHorizontal"; "GlyphOrientationVertical"; "Grid"; "GridArea"; "GridAutoColumns";
+      "GridAutoFlow"; "GridAutoRows"; "GridColumn"; "GridColumnEnd"; "GridColumnGap"; "GridColumnStart"; "GridGap"; "GridRow"; "GridRowEnd"; "GridRowGap"; "GridRowPosition"; "GridRowSpan";
+      "GridRowStart"; "GridTemplate"; "GridTemplateAreas"; "GridTemplateColumns"; "GridTemplateRows"; "HangingPunctuation"; "Height"; "HyphenateLimitChars"; "HyphenateLimitLines";
+      "HyphenateLimitZone"; "Hyphens"; "ImageOrientation"; "ImageRendering"; "ImageResolution"; "ImeMode"; "InlineSize"; "Isolation"; "JustifyContent"; "Kerning"; "LayoutGrid"; "LayoutGridChar";
+      "LayoutGridLine"; "LayoutGridMode"; "LayoutGridType"; "Left"; "LetterSpacing"; "LightingColor"; "LineBreak"; "LineClamp"; "LineHeight"; "ListStyle"; "ListStyleImage"; "ListStylePosition";
+      "ListStyleType"; "Margin"; "MarginBlockEnd"; "MarginBlockStart"; "MarginBottom"; "MarginInlineEnd"; "MarginInlineStart"; "MarginLeft"; "MarginRight"; "MarginTop"; "MarkerEnd";
+      "MarkerMid"; "MarkerStart"; "MarqueeDirection"; "MarqueeStyle"; "Mask"; "MaskBorder"; "MaskBorderRepeat"; "MaskBorderSlice"; "MaskBorderSource"; "MaskBorderWidth"; "MaskClip";
+      "MaskComposite"; "MaskImage"; "MaskMode"; "MaskOrigin"; "MaskPosition"; "MaskRepeat"; "MaskSize"; "MaskType"; "MaxFontSize"; "MaxHeight"; "MaxWidth"; "MinBlockSize"; "MinHeight";
+      "MinInlineSize"; "MinWidth"; "MixBlendMode"; "ObjectFit"; "ObjectPosition"; "OffsetBlockEnd"; "OffsetBlockStart"; "OffsetInlineEnd"; "OffsetInlineStart"; "Opacity"; "Order";
+      "Orphans"; "Outline"; "OutlineColor"; "OutlineOffset"; "OutlineStyle"; "OutlineWidth"; "Overflow"; "OverflowStyle"; "OverflowWrap"; "OverflowX"; "OverflowY"; "Padding";
+      "PaddingBlockEnd"; "PaddingBlockStart"; "PaddingBottom"; "PaddingInlineEnd"; "PaddingInlineStart"; "PaddingLeft"; "PaddingRight"; "PaddingTop"; "PageBreakAfter"; "PageBreakBefore";
+      "PageBreakInside"; "Pause"; "PauseAfter"; "PauseBefore"; "Perspective"; "PerspectiveOrigin"; "PointerEvents"; "Position"; "PunctuationTrim"; "Quotes"; "RegionFragment"; "Resize";
+      "RestAfter"; "RestBefore"; "Right"; "RubyAlign"; "RubyMerge"; "RubyPosition"; "ScrollBehavior"; "ScrollSnapCoordinate"; "ScrollSnapDestination"; "ScrollSnapType"; "ShapeImageThreshold";
+      "ShapeInside"; "ShapeMargin"; "ShapeOutside"; "ShapeRendering"; "Speak"; "SpeakAs"; "StopColor"; "StopOpacity"; "Stroke"; "StrokeDasharray"; "StrokeDashoffset"; "StrokeLinecap";
+      "StrokeLinejoin"; "StrokeMiterlimit"; "StrokeOpacity"; "StrokeWidth"; "TabSize"; "TableLayout"; "TextAlign"; "TextAlignLast"; "TextAnchor"; "TextCombineUpright"; "TextDecoration";
+      "TextDecorationColor"; "TextDecorationLine"; "TextDecorationLineThrough"; "TextDecorationNone"; "TextDecorationOverline"; "TextDecorationSkip"; "TextDecorationStyle";
+      "TextDecorationUnderline"; "TextEmphasis"; "TextEmphasisColor"; "TextEmphasisPosition"; "TextEmphasisStyle"; "TextHeight"; "TextIndent"; "TextJustify"; "TextJustifyTrim";
+      "TextKashidaSpace"; "TextLineThrough"; "TextLineThroughColor"; "TextLineThroughMode"; "TextLineThroughStyle"; "TextLineThroughWidth"; "TextOrientation"; "TextOverflow"; "TextOverline";
+      "TextOverlineColor"; "TextOverlineMode"; "TextOverlineStyle"; "TextOverlineWidth"; "TextRendering"; "TextScript"; "TextShadow"; "TextTransform"; "TextUnderlinePosition"; "TextUnderlineStyle";
+      "Top"; "TouchAction"; "Transform"; "TransformBox"; "TransformOrigin"; "TransformOriginZ"; "TransformStyle"; "Transition"; "TransitionDelay"; "TransitionDuration"; "TransitionProperty";
+      "TransitionTimingFunction"; "UnicodeBidi"; "UnicodeRange"; "UserFocus"; "UserInput"; "VerticalAlign"; "Visibility"; "VoiceBalance"; "VoiceDuration"; "VoiceFamily"; "VoicePitch";
+      "VoiceRange"; "VoiceRate"; "VoiceStress"; "VoiceVolume"; "WhiteSpace"; "WhiteSpaceTreatment"; "Widows"; "Width"; "WillChange"; "WordBreak"; "WordSpacing"; "WordWrap"; "WrapFlow";
+      "WrapMargin"; "WrapOption"; "WritingMode"; "ZIndex"; "Zoom" |]
