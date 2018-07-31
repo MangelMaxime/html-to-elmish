@@ -71,15 +71,6 @@ Target.create "Watch" (fun _ ->
         failwithf "Dotnet existed with code: %i\n" proc.ExitCode
 )
 
-Target.create "CopyMonacoModules" (fun _ ->
-    let requireJsOutput = jsLibsOutput </> "requirejs"
-    let vsOutput = jsLibsOutput </> "vs"
-    Directory.create requireJsOutput
-    Directory.create vsOutput
-    Shell.cp ("./node_modules" </> "requirejs" </> "require.js") requireJsOutput
-    Shell.cp_r ("./node_modules" </> "monaco-editor" </> "min" </> "vs") vsOutput
-)
-
 Target.create "CopyQUnitModules" (fun _ ->
     Directory.create testsDist
     Shell.cp_r ("./node_modules" </> "qunitjs" </> "qunit") (testsDist </> "qunit")
@@ -178,7 +169,6 @@ Target.create "CI" ignore
 "Clean"
     ==> "YarnInstall"
     ==> "Restore"
-    ==> "CopyMonacoModules"
     ==> "Setup"
 
 "Setup"
@@ -198,13 +188,11 @@ Target.create "CI" ignore
 
 // A "Release" include a "RunTests"
 "RunTests"
+    ==> "PublishNugets"
     ==> "Release"
 
 "Build"
     ==> "Release"
-
-"Restore"
-    ==> "PublishNugets"
 
 "CI"
     <== [ "Build"
