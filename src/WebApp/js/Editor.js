@@ -34,12 +34,6 @@ class Editor extends React.Component {
                 enabled: false
             }
         };
-        const requireConfig = {
-            url:  "libs/requirejs/require.js",
-            paths: {
-                vs: "libs/vs"
-            }
-        };
         return (
             <div style={{height: '100%', overflow: 'hidden'}}>
                 <ReactResizeDetector handleWidth handleHeight onResize={this.onResize} />
@@ -49,7 +43,6 @@ class Editor extends React.Component {
                     options={options}
                     onChange={this.onChange}
                     editorDidMount={this.editorDidMount}
-                    requireConfig={requireConfig}
                 />
             </div>
         );
