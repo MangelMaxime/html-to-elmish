@@ -47,7 +47,7 @@ let [<Literal>] PREFIX_DATA_ATTRIBUTE  = "data-"
 
 let [<Literal>] PREFIX_STYLE_HTML_ATTR = "Style [ "
 
-let attributesToString (attributes : (string * string) list) (depth : int) (currentRow : string) : string list =
+let attributesToString (currentRow : string) (attributes : (string * string) list) : string list =
     attributes
     |> List.map (fun (key, value) ->
         References.attributes
@@ -59,7 +59,7 @@ let attributesToString (attributes : (string * string) list) (depth : int) (curr
                 fsharpName + " " + (escapeValue typ value)
             | None ->
                 if key.Contains(PREFIX_DATA_ATTRIBUTE) then
-                    "HTMLAttr.Data(\"" + key.Substring(PREFIX_DATA_ATTRIBUTE.Length) + "\", " + (escapeValue References.AttributeType.String value) + ")"
+                    "HTMLAttr.Data (\"" + key.Substring(PREFIX_DATA_ATTRIBUTE.Length) + "\", " + (escapeValue References.AttributeType.String value) + ")"
                 elif key = "style" then
                     value.Split(';')
                     |> Array.filter (String.IsNullOrWhiteSpace >> not)
@@ -166,7 +166,8 @@ let htmlToElmish (htmlCode : string) =
             // If we have some attributes
             if attributes.Length > 0 then
                 let attrs =
-                    attributesToString attributes depth (fsharpCode.Split('\n') |> Array.last)
+                    attributes
+                    |> attributesToString (fsharpCode.Split('\n') |> Array.last)
                     |> List.mapi (fun index attr ->
                         if index = 0 then
                             " " + attr

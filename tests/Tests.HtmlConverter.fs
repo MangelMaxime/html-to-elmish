@@ -54,16 +54,54 @@ let tests _ =
     testCase "attributesToString: one attribute" <| fun test ->
         let result =
             [ "class", "button" ]
-            |> attributesToString
+            |> attributesToString ""
 
         test.deepEqual
             result
             [ "Class \"button\"" ]
 
+
+    testCase "attributesToString: inline style with one rule" <| fun test ->
+        let result =
+            [ "style", "color:red" ]
+            |> attributesToString ""
+
+        test.deepEqual
+            result
+            [ "Style [ Color \"red\" ]" ]
+
+    testCase "attributesToString: inline style with custom CSSProp" <| fun test ->
+        let result =
+            [ "style", "custom-css: red" ]
+            |> attributesToString ""
+
+        test.deepEqual
+            result
+            [ """Style [ CSSProp.Custom ("custom-css", "red") ]""" ]
+
+    testCase "attributesToString: inline style with several rules" <| fun test ->
+        let result =
+            [ "style", "color:red; background-color: blue" ]
+            |> attributesToString ""
+
+        test.deepEqual
+            result
+            [ """Style [ Color "red"
+         BackgroundColor "blue" ]""" ]
+
+    testCase "attributesToString: data attributes are converted to HTMLAttr.Data" <| fun test ->
+        let result =
+            [ "data-target", "button" ]
+            |> attributesToString ""
+
+        test.deepEqual
+            result
+            [ "HTMLAttr.Data (\"target\", \"button\")" ]
+
     testCase "attributesToString: unkown attributes are converted to HTMLAttr.Custom" <| fun test ->
         let result =
             [ "customAttribute", "button" ]
-            |> attributesToString
+            |> attributesToString ""
 
         test.deepEqual
             result
@@ -74,7 +112,7 @@ let tests _ =
             [ "class", "button"
               "onClick", "button"
               "height", "50" ]
-            |> attributesToString
+            |> attributesToString ""
 
         test.deepEqual
             result
