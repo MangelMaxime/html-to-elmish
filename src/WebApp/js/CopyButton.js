@@ -31,7 +31,7 @@ class CopyButton extends React.Component {
                 data-clipboard-text={this.props.value}
                 onMouseLeave={this.onMouseLeave}>
                 <span className="icon">
-                    <i className="fa fa-copy"></i>
+                    <i className="far fa-copy"></i>
                 </span>
                 <span>Copy to clipboard</span>
             </div>

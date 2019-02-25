@@ -13,6 +13,7 @@
     "@babel/preset-env": "^7.3.4",
     "@babel/preset-react": "^7.0.0",
     "@babel/runtime": "^7.3.4",
+    "@fortawesome/fontawesome-free": "^5.7.2",
     "babel-loader": "^8.0.0",
     "bulma-pageloader": "^2.1.0",
     "bulma-tooltip": "^2.0.2",
@@ -44,7 +45,6 @@
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
     "bulma": "^0.7.4",
-    "font-awesome": "^4.7.0",
     "htmlparser2": "^3.10.1",
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
