@@ -58,17 +58,21 @@ Target.create "Restore" (fun _ ->
 )
 
 Target.create "Build" (fun _ ->
-    let proc = DotNet.exec (fun p ->
-                                { p with WorkingDirectory = "src/WebApp" } ) "fable" "webpack --port free -- -p"
+    let proc =
+        CreateProcess.fromRawCommandLine "npx" "webpack --config src/WebApp/webpack.config.js --mode production"
+        |> Proc.run
+
     if proc.ExitCode <> 0 then
-        failwithf "Dotnet existed with code: %i\n" proc.ExitCode
+        failwithf "Webpack existed with code: %i\n" proc.ExitCode
 )
 
 Target.create "Watch" (fun _ ->
-    let proc = DotNet.exec (fun p ->
-                                { p with WorkingDirectory = "src/WebApp" } ) "fable" "webpack-dev-server --port free --"
+    let proc =
+        CreateProcess.fromRawCommandLine "npx" "webpack-dev-server --config src/WebApp/webpack.config.js --watch"
+        |> Proc.run
+
     if proc.ExitCode <> 0 then
-        failwithf "Dotnet existed with code: %i\n" proc.ExitCode
+        failwithf "Webpack existed with code: %i\n" proc.ExitCode
 )
 
 Target.create "CopyQUnitModules" (fun _ ->
@@ -77,19 +81,21 @@ Target.create "CopyQUnitModules" (fun _ ->
 )
 
 Target.create "RunLiveTests" (fun _ ->
-    let proc = DotNet.exec (fun p ->
-                                { p with WorkingDirectory = "tests" } ) "fable" "yarn-run webpack-dev-server --port free -- --config tests/webpack.config.js"
+    let proc =
+        CreateProcess.fromRawCommandLine "npx" "webpack-dev-server --config tests/webpack.config.js --watch"
+        |> Proc.run
 
     if proc.ExitCode <> 0 then
-        failwithf "Dotnet existed with code: %i\n" proc.ExitCode
+        failwithf "Webpack existed with code: %i\n" proc.ExitCode
 )
 
 Target.create "BuildTests" (fun _ ->
-    let proc = DotNet.exec (fun p ->
-                                { p with WorkingDirectory = "tests" } ) "fable" "yarn-run webpack --port free -- -p --config tests/webpack.config.js"
+    let proc =
+        CreateProcess.fromRawCommandLine "npx" "webpack --config tests/webpack.config.js --mode production"
+        |> Proc.run
 
     if proc.ExitCode <> 0 then
-        failwithf "Dotnet existed with code: %i\n" proc.ExitCode
+        failwithf "Webpack existed with code: %i\n" proc.ExitCode
 )
 
 Target.create "RunTests" (fun _ ->

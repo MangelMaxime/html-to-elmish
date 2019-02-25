@@ -4,20 +4,20 @@ storage: none
 
 nuget FSharp.Core redirects:force
 nuget Fable.Core
-nuget Fable.Elmish prerelease
-nuget Fable.Elmish.React prerelease
-nuget Fable.Elmish.Browser prerelease
-nuget Fable.Elmish.Debugger prerelease
-nuget Fable.Elmish.HMR prerelease
+nuget Fable.Elmish
+nuget Fable.Elmish.React
+nuget Fable.Elmish.Browser
+nuget Fable.Elmish.Debugger
+nuget Fable.Elmish.HMR
 nuget Fable.PowerPack
-nuget Fable.React prerelease
-nuget Fulma prerelease
-nuget Fulma.Extensions prerelease
+nuget Fable.React
+nuget Fulma
+nuget Fulma.Extensions.Wikiki.PageLoader
+nuget Fable.FontAwesome
+nuget Fable.FontAwesome.Free
 nuget Thoth.Json
 
-github fable-compiler/ts2fable-exports:dev Monaco.fs
-
-clitool dotnet-fable
+github fable-compiler/ts2fable-exports:2ef3f0144570d6b963f69c08143357b95a5168cb Monaco.fs
 
 group netcorebuild
     storage:none

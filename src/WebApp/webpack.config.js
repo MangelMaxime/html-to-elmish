@@ -10,20 +10,22 @@ function resolve(filePath) {
     return path.join(__dirname, filePath)
 }
 
-var babelOptions = fableUtils.resolveBabelOptions({
+var babelOptions = {
     presets: [
-        ["env", {
+        ["@babel/preset-env", {
             "targets": {
                 "browsers": ["last 2 versions"]
             },
-            "modules": false
+            "modules": false,
+            "useBuiltIns": "usage"
         }],
-        "react"
+        "@babel/react"
     ],
-    plugins: [
-        "transform-class-properties"
+    "plugins": [
+        "@babel/plugin-transform-runtime",
+        "@babel/plugin-proposal-class-properties"
     ]
-});
+};
 
 var isProduction = process.argv.indexOf("-p") >= 0;
 console.log("Bundling for " + (isProduction ? "production" : "development") + "...");
@@ -90,13 +92,13 @@ module.exports = {
     entry: isProduction ? // We don't use the same entry for dev and production, to make HMR over style quicker for dev env
         {
             app: [
-                "babel-polyfill",
+                "@babel/polyfill",
                 resolve('HtmlToElmish.fsproj'),
                 resolve('sass/main.scss')
             ]
         } : {
             app: [
-                "babel-polyfill",
+                "@babel/polyfill",
                 resolve('HtmlToElmish.fsproj')
             ],
             style: [
@@ -128,9 +130,9 @@ module.exports = {
             new MiniCssExtractPlugin({
                 filename: 'style.[hash].css'
             }),
-            new CopyWebpackPlugin([
-                { from: './public' }
-            ]),
+            // new CopyWebpackPlugin([
+            //     { from: './public' }
+            // ]),
             // ensure that we get a production build of any dependencies
             // this is primarily for React, where this removes 179KB from the bundle
             new webpack.DefinePlugin({

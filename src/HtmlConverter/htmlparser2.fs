@@ -12,19 +12,19 @@ type [<AllowNullLiteral>] IExports =
     abstract Parser: ParserStatic
 
 type [<AllowNullLiteral>] Handler =
-    abstract onopentag: (string -> obj -> unit) option with get, set
-    abstract onopentagname: (string -> unit) option with get, set
-    abstract onattribute: (string -> string -> unit) option with get, set
-    abstract ontext: (string -> unit) option with get, set
-    abstract onclosetag: (string -> unit) option with get, set
-    abstract onprocessinginstruction: (string -> string -> unit) option with get, set
-    abstract oncomment: (string -> unit) option with get, set
-    abstract oncommentend: (unit -> unit) option with get, set
-    abstract oncdatastart: (unit -> unit) option with get, set
-    abstract oncdataend: (unit -> unit) option with get, set
-    abstract onerror: (Error -> unit) option with get, set
-    abstract onreset: (unit -> unit) option with get, set
-    abstract onend: (unit -> unit) option with get, set
+    abstract onopentag: (string -> obj -> unit) with get, set
+    abstract onopentagname: (string -> unit) with get, set
+    abstract onattribute: (string -> string -> unit) with get, set
+    abstract ontext: (string -> unit) with get, set
+    abstract onclosetag: (string -> unit) with get, set
+    abstract onprocessinginstruction: (string -> string -> unit) with get, set
+    abstract oncomment: (string -> unit) with get, set
+    abstract oncommentend: (unit -> unit) with get, set
+    abstract oncdatastart: (unit -> unit) with get, set
+    abstract oncdataend: (unit -> unit) with get, set
+    abstract onerror: (Error -> unit) with get, set
+    abstract onreset: (unit -> unit) with get, set
+    abstract onend: (unit -> unit) with get, set
 
 type [<AllowNullLiteral>] Options =
     abstract xmlMode: bool option with get, set

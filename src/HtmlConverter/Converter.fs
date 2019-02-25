@@ -135,110 +135,113 @@ let htmlToElmish (htmlCode : string) =
     let mutable depth = -1
     let context = Dictionary<int, bool>()
 
-    let handler = jsOptions<Htmlparser2.Handler>(fun handler ->
-        handler.onopentag <- Some <| fun name attributes ->
+    let handler = createEmpty<Htmlparser2.Handler>
 
-            let attributes =
-                // Unsafe unwrap, be we consider the libs always produce valid keyValues mapping
-                Decode.unwrap (Decode.keyValuePairs Decode.string) attributes
 
-            depth <- depth + 1
-            if context.[depth] then
-                fsharpCode <- fsharpCode + "\n" + (indent depth) + " "
-            else
-                context.[depth] <- true
+    handler.onopentag <- fun (name : string) (attributes : obj) ->
+        let attributes =
+            // Unsafe unwrap, be we consider the libs always produce valid keyValues mapping
+            match Decode.fromValue "$" (Decode.keyValuePairs Decode.string) attributes with
+            | Ok attributes -> attributes
+            | Error msg -> failwith msg
 
-            if depth <> 0 then
-                fsharpCode <- fsharpCode + " "
+        depth <- depth + 1
+        if context.[depth] then
+            fsharpCode <- fsharpCode + "\n" + (indent depth) + " "
+        else
+            context.[depth] <- true
 
+        if depth <> 0 then
+            fsharpCode <- fsharpCode + " "
+
+        // Try to detect inlined tag in TextNode
+        let lastRow = fsharpCode.Split('\n') |> Array.last
+        let trimed = lastRow.Trim()
+        if trimed.StartsWith("[") && trimed.Length <> 1 then
+            fsharpCode <- fsharpCode.TrimEnd()
+            fsharpCode <- fsharpCode + "\n" + String.replicate (countFirstOccurenceSize lastRow ' ' + 2) INDENT_WITH
+
+        // Add tag name
+        fsharpCode <- fsharpCode + name
+        // Add open attributes bracket
+        fsharpCode <- fsharpCode + " ["
+
+        // If we have some attributes
+        if attributes.Length > 0 then
+            let attrs =
+                attributes
+                |> attributesToString (fsharpCode.Split('\n') |> Array.last)
+                |> List.mapi (fun index attr ->
+                    if index = 0 then
+                        " " + attr
+                    else
+                        let lastRow = fsharpCode.Split('\n') |> Array.last
+                        let lastIndex = lastRow.LastIndexOf '['
+                        String.replicate (lastIndex + 2) " " + attr
+                )
+                |> String.concat "\n"
+                // Add space before the closing bracket
+                |> String.suffix " "
+            fsharpCode <- fsharpCode + attrs
+        else
+            // Add space between attr list brackets, to have good display
+            fsharpCode <- fsharpCode + " "
+
+        // Close attribue bracket
+        fsharpCode <- fsharpCode + "]"
+
+        // If the tag can haev children open the bracket
+        if not (List.contains name voidElements) then
+            fsharpCode <- fsharpCode + "\n" + (indent (depth + 1)) + "["
+
+
+    handler.ontext <- fun rawText ->
+        let text = rawText.Trim()
+        if not (String.IsNullOrWhiteSpace text) then
             // Try to detect inlined tag in TextNode
             let lastRow = fsharpCode.Split('\n') |> Array.last
             let trimed = lastRow.Trim()
-            if trimed.StartsWith("[") && trimed.Length <> 1 then
+            // If the trimed text is empty, don't try to fixed spaces
+            if not (String.IsNullOrEmpty trimed) then
                 fsharpCode <- fsharpCode.TrimEnd()
-                fsharpCode <- fsharpCode + "\n" + String.replicate (countFirstOccurenceSize lastRow ' ' + 2) INDENT_WITH
+                // If the text is the first children of it's parent, add one space
+                // Example:
+                // div [ ]
+                //     [ str "my text here" ]
+                //      ^
+                if trimed.StartsWith("[") && trimed.Length = 1 then
+                    fsharpCode <- fsharpCode + " "
+                // If the text is the second child of it's parent and previous tag is self closing, go to the line + indent by same space as last line + add 2 extra spaces
+                // Example:
+                // div [ ]
+                //     [ input [ Type "checkbox" ]
+                //       str "Press enter to submit" ]
+                // ^^^^^^
+                elif trimed.StartsWith("[") && trimed.Length <> 1 then
+                    fsharpCode <- fsharpCode + "\n" + String.replicate (countFirstOccurenceSize lastRow ' ' + 2) " "
+                // If the text is not the first or second child of it's parent and previous tag is self closing, go to the line + indent by same space as last line
+                // Example:
+                // p [ ]
+                //     [ span [ ]
+                //         [ str "texte n°1" ]
+                //       span [ ]
+                //         [ str "texte n°2" ]
+                //       br [ ]
+                //       str "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis." ]
+                // ^^^^^^
+                else
+                    fsharpCode <- fsharpCode + "\n" + String.replicate (countFirstOccurenceSize lastRow ' ') " "
 
-            // Add tag name
-            fsharpCode <- fsharpCode + name
-            // Add open attributes bracket
-            fsharpCode <- fsharpCode + " ["
+            if text.Length > 0 then
+                fsharpCode <- fsharpCode + "str \"" + text + "\""
 
-            // If we have some attributes
-            if attributes.Length > 0 then
-                let attrs =
-                    attributes
-                    |> attributesToString (fsharpCode.Split('\n') |> Array.last)
-                    |> List.mapi (fun index attr ->
-                        if index = 0 then
-                            " " + attr
-                        else
-                            let lastRow = fsharpCode.Split('\n') |> Array.last
-                            let lastIndex = lastRow.LastIndexOf '['
-                            String.replicate (lastIndex + 2) " " + attr
-                    )
-                    |> String.concat "\n"
-                    // Add space before the closing bracket
-                    |> String.suffix " "
-                fsharpCode <- fsharpCode + attrs
-            else
-                // Add space between attr list brackets, to have good display
-                fsharpCode <- fsharpCode + " "
+    handler.onclosetag <- fun name ->
+        if context.[depth + 1] then
+            context.Remove (depth + 1) |> ignore
 
-            // Close attribue bracket
-            fsharpCode <- fsharpCode + "]"
-
-            // If the tag can haev children open the bracket
-            if not (List.contains name voidElements) then
-                fsharpCode <- fsharpCode + "\n" + (indent (depth + 1)) + "["
-
-        handler.ontext <- Some <| fun rawText ->
-            let text = rawText.Trim()
-            if not (String.IsNullOrWhiteSpace text) then
-                // Try to detect inlined tag in TextNode
-                let lastRow = fsharpCode.Split('\n') |> Array.last
-                let trimed = lastRow.Trim()
-                // If the trimed text is empty, don't try to fixed spaces
-                if not (String.IsNullOrEmpty trimed) then
-                    fsharpCode <- fsharpCode.TrimEnd()
-                    // If the text is the first children of it's parent, add one space
-                    // Example:
-                    // div [ ]
-                    //     [ str "my text here" ]
-                    //      ^
-                    if trimed.StartsWith("[") && trimed.Length = 1 then
-                        fsharpCode <- fsharpCode + " "
-                    // If the text is the second child of it's parent and previous tag is self closing, go to the line + indent by same space as last line + add 2 extra spaces
-                    // Example:
-                    // div [ ]
-                    //     [ input [ Type "checkbox" ]
-                    //       str "Press enter to submit" ]
-                    // ^^^^^^
-                    elif trimed.StartsWith("[") && trimed.Length <> 1 then
-                        fsharpCode <- fsharpCode + "\n" + String.replicate (countFirstOccurenceSize lastRow ' ' + 2) " "
-                    // If the text is not the first or second child of it's parent and previous tag is self closing, go to the line + indent by same space as last line
-                    // Example:
-                    // p [ ]
-                    //     [ span [ ]
-                    //         [ str "texte n°1" ]
-                    //       span [ ]
-                    //         [ str "texte n°2" ]
-                    //       br [ ]
-                    //       str "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis." ]
-                    // ^^^^^^
-                    else
-                        fsharpCode <- fsharpCode + "\n" + String.replicate (countFirstOccurenceSize lastRow ' ') " "
-
-                if text.Length > 0 then
-                    fsharpCode <- fsharpCode + "str \"" + text + "\""
-
-        handler.onclosetag <- Some <| fun name ->
-            if context.[depth + 1] then
-                context.Remove (depth + 1) |> ignore
-
-            depth <- depth - 1
-            if not (List.contains name voidElements) then
-                fsharpCode <- fsharpCode + " ]"
-    )
+        depth <- depth - 1
+        if not (List.contains name voidElements) then
+            fsharpCode <- fsharpCode + " ]"
 
     let parser = Htmlparser2.exports.Parser.Create(handler)
     parser.write(htmlCode)

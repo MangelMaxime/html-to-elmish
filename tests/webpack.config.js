@@ -7,17 +7,20 @@ function resolve(filePath) {
     return path.join(__dirname, filePath)
 }
 
-var babelOptions = fableUtils.resolveBabelOptions({
+var babelOptions = {
     presets: [
-        ["env", {
+        ["@babel/preset-env", {
             "targets": {
                 "browsers": ["last 2 versions"]
             },
-            "modules": false
-        }]
+            "modules": false,
+            "useBuiltIns": "usage"
+        }],
     ],
-    plugins: ["transform-runtime"]
-});
+    "plugins": [
+        "@babel/plugin-transform-runtime",
+    ]
+};
 
 var isProduction = process.argv.indexOf("-p") >= 0;
 console.log("Bundling for " + (isProduction ? "production" : "development") + "...");
@@ -29,9 +32,6 @@ module.exports = {
     output: {
         filename: 'bundle.js',
         path: resolve('./dist/'),
-    },
-    resolve: {
-        modules: ["node_modules/", resolve("./../node_modules/")]
     },
     devServer: {
         contentBase: [

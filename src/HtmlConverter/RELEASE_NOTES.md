@@ -1,3 +1,8 @@
+### 2.0.0
+
+- Upgrade to Fable 2
+- Upgrade to Thoth.Json 2
+
 ### 1.1.0
 
 - Support inline `style`
