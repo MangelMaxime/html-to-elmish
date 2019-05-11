@@ -1,4 +1,4 @@
-# Html to Elmish [![Build status](https://ci.appveyor.com/api/projects/status/a9atdqi3pkcd755y/branch/master?svg=true)](https://ci.appveyor.com/project/MangelMaxime/html-to-elmish/branch/master)
+# Html to Elmish [![Build Status](https://dev.azure.com/MangelMaximeGithub/html-to-elmish/_apis/build/status/MangelMaxime.html-to-elmish?branchName=master)](https://dev.azure.com/MangelMaximeGithub/html-to-elmish/_build/latest?definitionId=1&branchName=master)
 
 
 ## How to build ?
