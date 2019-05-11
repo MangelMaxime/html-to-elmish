@@ -4,20 +4,34 @@ open HtmlConverter.Converter
 open HtmlConverter.References
 open QUnit
 
+let private toUnixNewLine (s: string) =
+    s.Replace("\r\n", "\n")
+
+type Asserter with
+    member test.deepEqualIgnoreNewLineSeparator (a: string list) (b: string list) =
+        let aUnix = a |> List.map toUnixNewLine
+        let bUnix = a |> List.map toUnixNewLine
+        test.deepEqual aUnix bUnix
+
+    member test.equalIgnoreNewLineSeparator (a: string) (b: string) =
+        let aUnix = a |> toUnixNewLine
+        let bUnix = a |> toUnixNewLine
+        test.equal aUnix bUnix
+
 let tests _ =
     registerModule("HtmlConverter")
 
     testCase "escapeValue: String" <| fun test ->
-        test.equal
+        test.equalIgnoreNewLineSeparator
             (escapeValue AttributeType.String "maxime")
             "\"maxime\""
 
     testCase "escapeValue: Bool" <| fun test ->
-        test.equal
+        test.equalIgnoreNewLineSeparator
             (escapeValue AttributeType.Bool "false")
             "false"
 
-        test.equal
+        test.equalIgnoreNewLineSeparator
             (escapeValue AttributeType.Bool "true")
             "true"
 
@@ -28,26 +42,26 @@ let tests _ =
             | _ -> test.pass()
 
     testCase "escapeValue: Int" <| fun test ->
-        test.equal
+        test.equalIgnoreNewLineSeparator
             (escapeValue AttributeType.Int "2")
             "2"
 
     testCase "escapeValue: Obj" <| fun test ->
-        test.equal
+        test.equalIgnoreNewLineSeparator
             (escapeValue AttributeType.Obj "maxime")
             "maxime"
 
     testCase "escapeValue: Func" <| fun test ->
-        test.equal
+        test.equalIgnoreNewLineSeparator
             (escapeValue AttributeType.Func "function () ...")
             "(fun _ -> ())"
 
     testCase "escapeValue: Float" <| fun test ->
-        test.equal
+        test.equalIgnoreNewLineSeparator
             (escapeValue AttributeType.Float "1")
             "1."
 
-        test.equal
+        test.equalIgnoreNewLineSeparator
             (escapeValue AttributeType.Float "1.2")
             "1.2"
 
@@ -56,7 +70,7 @@ let tests _ =
             [ "class", "button" ]
             |> attributesToString ""
 
-        test.deepEqual
+        test.deepEqualIgnoreNewLineSeparator
             result
             [ "Class \"button\"" ]
 
@@ -66,7 +80,7 @@ let tests _ =
             [ "style", "color:red" ]
             |> attributesToString ""
 
-        test.deepEqual
+        test.deepEqualIgnoreNewLineSeparator
             result
             [ "Style [ Color \"red\" ]" ]
 
@@ -75,7 +89,7 @@ let tests _ =
             [ "style", "custom-css: red" ]
             |> attributesToString ""
 
-        test.deepEqual
+        test.deepEqualIgnoreNewLineSeparator
             result
             [ """Style [ CSSProp.Custom ("custom-css", "red") ]""" ]
 
@@ -84,7 +98,7 @@ let tests _ =
             [ "style", "color:red; background-color: blue" ]
             |> attributesToString ""
 
-        test.deepEqual
+        test.deepEqualIgnoreNewLineSeparator
             result
             [ """Style [ Color "red"
          BackgroundColor "blue" ]""" ]
@@ -94,7 +108,7 @@ let tests _ =
             [ "data-target", "button" ]
             |> attributesToString ""
 
-        test.deepEqual
+        test.deepEqualIgnoreNewLineSeparator
             result
             [ "HTMLAttr.Data (\"target\", \"button\")" ]
 
@@ -103,7 +117,7 @@ let tests _ =
             [ "customAttribute", "button" ]
             |> attributesToString ""
 
-        test.deepEqual
+        test.deepEqualIgnoreNewLineSeparator
             result
             [ "HTMLAttr.Custom (\"customAttribute\", \"button\")" ]
 
@@ -114,7 +128,7 @@ let tests _ =
               "height", "50" ]
             |> attributesToString ""
 
-        test.deepEqual
+        test.deepEqualIgnoreNewLineSeparator
             result
             [ "Class \"button\""
               "OnClick (fun _ -> ())"
@@ -123,14 +137,14 @@ let tests _ =
     testCase "simple tag" <| fun test ->
         let result = htmlToElmish "<div></div>"
 
-        test.equal
+        test.equalIgnoreNewLineSeparator
             result
             """div [ ]
     [ ]"""
 
     testCase "self-closing tag" <| fun test ->
         let result = htmlToElmish "<br/>"
-        test.equal
+        test.equalIgnoreNewLineSeparator
             result
             "br [ ]"
 
@@ -138,7 +152,7 @@ let tests _ =
         let result =
             htmlToElmish """<div class="button"></div>"""
 
-        test.equal
+        test.equalIgnoreNewLineSeparator
             result
             """div [ Class "button" ]
     [ ]"""
@@ -147,7 +161,7 @@ let tests _ =
         let result =
             htmlToElmish """<div class="button" height="50" onClick="onClick();"></div>"""
 
-        test.equal
+        test.equalIgnoreNewLineSeparator
             result
             """div [ Class "button"
       Height 50
@@ -164,7 +178,7 @@ let tests _ =
     </div>
 </div>"""
 
-        test.equal
+        test.equalIgnoreNewLineSeparator
             result
             """div [ Class "button"
       Height 50 ]
@@ -182,7 +196,7 @@ let tests _ =
     <span>Maxime</span>
 </div>"""
 
-        test.equal
+        test.equalIgnoreNewLineSeparator
             result
             """div [ ]
     [ span [ ]
@@ -199,7 +213,7 @@ let tests _ =
     </div>
 </div>"""
 
-        test.equal
+        test.equalIgnoreNewLineSeparator
             result
             """div [ Class "container" ]
     [ div [ Class "notification" ]
@@ -212,7 +226,7 @@ let tests _ =
         let result =
             htmlToElmish """<input name="firstname">"""
 
-        test.equal
+        test.equalIgnoreNewLineSeparator
             result
             """input [ Name "firstname" ]"""
 
@@ -224,7 +238,7 @@ let tests _ =
     <br>
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.
 </p>"""
-        test.equal
+        test.equalIgnoreNewLineSeparator
             result
             """p [ ]
     [ span [ ]
@@ -238,7 +252,7 @@ let tests _ =
         let result =
             htmlToElmish """<div><input type="checkbox"> Press enter to submit</div>"""
 
-        test.equal
+        test.equalIgnoreNewLineSeparator
             result
             """div [ ]
     [ input [ Type "checkbox" ]
@@ -248,7 +262,7 @@ let tests _ =
         let result =
             htmlToElmish """<div>my text here</div>"""
 
-        test.equal
+        test.equalIgnoreNewLineSeparator
             result
             """div [ ]
     [ str "my text here" ]"""
