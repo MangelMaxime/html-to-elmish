@@ -58,21 +58,11 @@ Target.create "Restore" (fun _ ->
 )
 
 Target.create "Build" (fun _ ->
-    let proc =
-        CreateProcess.fromRawCommandLine "npx" "webpack --config src/WebApp/webpack.config.js --mode production"
-        |> Proc.run
-
-    if proc.ExitCode <> 0 then
-        failwithf "Webpack existed with code: %i\n" proc.ExitCode
+    Yarn.exec "webpack --config src/WebApp/webpack.config.js --mode production" id
 )
 
 Target.create "Watch" (fun _ ->
-    let proc =
-        CreateProcess.fromRawCommandLine "npx" "webpack-dev-server --config src/WebApp/webpack.config.js --watch"
-        |> Proc.run
-
-    if proc.ExitCode <> 0 then
-        failwithf "Webpack existed with code: %i\n" proc.ExitCode
+    Yarn.exec "webpack-dev-server --config src/WebApp/webpack.config.js --watch" id
 )
 
 Target.create "CopyQUnitModules" (fun _ ->
@@ -81,21 +71,11 @@ Target.create "CopyQUnitModules" (fun _ ->
 )
 
 Target.create "RunLiveTests" (fun _ ->
-    let proc =
-        CreateProcess.fromRawCommandLine "npx" "webpack-dev-server --config tests/webpack.config.js --watch"
-        |> Proc.run
-
-    if proc.ExitCode <> 0 then
-        failwithf "Webpack existed with code: %i\n" proc.ExitCode
+    Yarn.exec "webpack-dev-server --config tests/webpack.config.js --watch" id
 )
 
 Target.create "BuildTests" (fun _ ->
-    let proc =
-        CreateProcess.fromRawCommandLine "npx" "webpack --config tests/webpack.config.js --mode production"
-        |> Proc.run
-
-    if proc.ExitCode <> 0 then
-        failwithf "Webpack existed with code: %i\n" proc.ExitCode
+    Yarn.exec "webpack --config tests/webpack.config.js --mode production" id
 )
 
 Target.create "RunTests" (fun _ ->
