@@ -1,11 +1,14 @@
 module App.Main
 
 open Elmish
-open Fable.Import
 open Fable.Core
+open Fable.React
+open Fable.React.Props
+open Fable.FontAwesome
 open Monaco
 open HtmlConverter.Converter
-open Fable.FontAwesome
+open Fulma
+open Fulma.Extensions.Wikiki
 
 type EditorState =
     | Loading
@@ -44,12 +47,6 @@ let update (msg : Msg) (model : Model) =
         { model with FSharpCode =
                         htmlToElmish model.HtmlCode }, Cmd.none
 
-open Fable.Helpers.React
-open Fable.Helpers.React.Props
-open Fulma
-open Fulma.Extensions.Wikiki
-open Fable.FontAwesome
-
 module Monaco =
 
     open Fable.Core.JsInterop
@@ -67,7 +64,7 @@ module Monaco =
         | EditorDidMount of (Monaco.Editor.IEditor * Monaco.IExports -> unit)
         | RequireConfig of obj
 
-    let inline editor (props: Props list) : React.ReactElement =
+    let inline editor (props: Props list) : ReactElement =
         ofImport "default" "react-monaco-editor" (keyValueList CaseRules.LowerFirst props) []
 
 module Editor =
@@ -81,7 +78,7 @@ module Editor =
         | IsReadOnly of bool
         | EditorDidMount of (unit -> unit)
 
-    let inline editor (props: Props list) : React.ReactElement =
+    let inline editor (props: Props list) : ReactElement =
         ofImport "default" "./js/Editor.js" (keyValueList CaseRules.LowerFirst props) []
 
 module CopyButton =
@@ -91,7 +88,7 @@ module CopyButton =
     type Props =
         | Value of string
 
-    let inline copyButtton (props: Props list) : React.ReactElement =
+    let inline copyButtton (props: Props list) : ReactElement =
         ofImport "default" "./js/CopyButton.js" (keyValueList CaseRules.LowerFirst props) []
 
 let private navbarItem (text : string) (sampleCode : string) dispatch =
@@ -172,5 +169,5 @@ open Elmish.React
 open Elmish.HMR
 
 Program.mkProgram init update view
-|> Program.withReact "elmish-app"
+|> Program.withReactBatched "elmish-app"
 |> Program.run

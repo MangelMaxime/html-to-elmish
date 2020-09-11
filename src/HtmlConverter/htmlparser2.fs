@@ -3,7 +3,6 @@ module rec Htmlparser2
 
 open System
 open Fable.Core
-open Fable.Import.JS
 
 // type Writable = Stream.Writable
 
@@ -22,7 +21,7 @@ type [<AllowNullLiteral>] Handler =
     abstract oncommentend: (unit -> unit) with get, set
     abstract oncdatastart: (unit -> unit) with get, set
     abstract oncdataend: (unit -> unit) with get, set
-    abstract onerror: (Error -> unit) with get, set
+    abstract onerror: (Exception -> unit) with get, set
     abstract onreset: (unit -> unit) with get, set
     abstract onend: (unit -> unit) with get, set
 
