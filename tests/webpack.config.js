@@ -1,6 +1,5 @@
 var path = require("path");
 var webpack = require("webpack");
-var fableUtils = require("fable-utils");
 
 
 function resolve(filePath) {
