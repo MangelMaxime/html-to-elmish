@@ -19,7 +19,7 @@ nuget Fable.FontAwesome
 nuget Fable.FontAwesome.Free
 nuget Thoth.Json
 
-github fable-compiler/ts2fable-exports:2ef3f0144570d6b963f69c08143357b95a5168cb Monaco.fs
+github fable-compiler/repl:3dbe5f390049144aaaed5eec734282168c246df0 src/App/Libs/Monaco.fs
 
 group netcorebuild
     storage:none

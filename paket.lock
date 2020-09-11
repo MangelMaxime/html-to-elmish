@@ -72,8 +72,8 @@ NUGET
       Fable.Core (>= 3.1.4) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.7) - restriction: >= netstandard2.0
 GITHUB
-  remote: fable-compiler/ts2fable-exports
-    Monaco.fs (2ef3f0144570d6b963f69c08143357b95a5168cb)
+  remote: fable-compiler/repl
+    src/App/Libs/Monaco.fs (3dbe5f390049144aaaed5eec734282168c246df0)
 GROUP netcorebuild
 STORAGE: NONE
 RESTRICTION: == netstandard2.0
