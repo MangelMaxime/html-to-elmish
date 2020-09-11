@@ -1,6 +1,6 @@
 version 5.249.0
 
-source https://www.nuget.org/api/v2
+source https://api.nuget.org/v3/index.json
 
 storage: none
 
@@ -23,7 +23,7 @@ github fable-compiler/ts2fable-exports:2ef3f0144570d6b963f69c08143357b95a5168cb 
 
 group netcorebuild
     storage:none
-    source https://www.nuget.org/api/v2
+    source https://api.nuget.org/v3/index.json
     framework: netstandard2.0
 
     nuget NETStandard.Library.NETFramework
