@@ -22,44 +22,46 @@ var babelOptions = {
     ]
 };
 
-var isProduction = process.argv.indexOf("-p") >= 0;
-console.log("Bundling for " + (isProduction ? "production" : "development") + "...");
+module.exports = function(env, argv) {
+    var isProduction = argv.mode == "production"
+    console.log("Bundling for " + (isProduction ? "production" : "development") + "...");
 
-module.exports = {
-    devtool: "source-map",
-    entry: resolve('./Tests.fsproj'),
-    mode: isProduction ? "production" : "development",
-    output: {
-        filename: 'bundle.js',
-        path: resolve('./dist/'),
-    },
-    devServer: {
-        contentBase: [
-            resolve('./static'),
-            resolve('./dist'),
-        ],
-        port: 8080
-    },
-    module: {
-        rules: [
-            {
-                test: /\.fs(x|proj)?$/,
-                use: {
-                    loader: "fable-loader",
-                    options: {
-                        babel: babelOptions,
-                        define: isProduction ? [] : ["DEBUG"]
+    return {
+        devtool: "source-map",
+        entry: resolve('./Tests.fsproj'),
+        mode: isProduction ? "production" : "development",
+        output: {
+            filename: 'bundle.js',
+            path: resolve('./dist/'),
+        },
+        devServer: {
+            contentBase: [
+                resolve('./static'),
+                resolve('./dist'),
+            ],
+            port: 8080
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.fs(x|proj)?$/,
+                    use: {
+                        loader: "fable-loader",
+                        options: {
+                            babel: babelOptions,
+                            define: isProduction ? [] : ["DEBUG"]
+                        }
                     }
-                }
-            },
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                    options: babelOptions
                 },
-            }
-        ]
+                {
+                    test: /\.js$/,
+                    exclude: /node_modules/,
+                    use: {
+                        loader: 'babel-loader',
+                        options: babelOptions
+                    },
+                }
+            ]
+        }
     }
 };
