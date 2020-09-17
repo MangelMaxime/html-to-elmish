@@ -67,7 +67,7 @@ Target.create "Watch" (fun _ ->
 
 Target.create "CopyQUnitModules" (fun _ ->
     Directory.create testsDist
-    Shell.cp_r ("./node_modules" </> "qunitjs" </> "qunit") (testsDist </> "qunit")
+    Shell.cp_r ("./node_modules" </> "qunit" </> "qunit") (testsDist </> "qunit")
 )
 
 Target.create "RunLiveTests" (fun _ ->
