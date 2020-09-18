@@ -130,10 +130,10 @@ module Extensions =
 
     type Asserter with
         /// Fail the test and show the unexpected value serialized in test results
-        member test.unexpected (value: 'a) =
+        member inline test.unexpected (value: 'a) =
             test.failwith (sprintf "Unexpected value: %s" (Encode.Auto.toString(0, value)))
         /// Uses F#'s structural equality for testing
-        member test.areEqual (expected: 't) (actual: 't) =
+        member inline test.areEqual (expected: 't) (actual: 't) =
             if expected = actual
             then test.pass()
             else test.failwith (sprintf "Expected %s but got %s" (Encode.Auto.toString(0, expected)) (Encode.Auto.toString(0, actual)))

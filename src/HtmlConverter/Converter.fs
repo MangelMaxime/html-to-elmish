@@ -146,7 +146,9 @@ let htmlToElmish (htmlCode : string) =
             | Error msg -> failwith msg
 
         depth <- depth + 1
-        if context.[depth] then
+        //                               is in dict
+        //                               |     value of key `depth`
+        if context.TryGetValue(depth) = (true, true) then
             fsharpCode <- fsharpCode + "\n" + (indent depth) + " "
         else
             context.[depth] <- true
@@ -236,7 +238,9 @@ let htmlToElmish (htmlCode : string) =
                 fsharpCode <- fsharpCode + "str \"" + text + "\""
 
     handler.onclosetag <- fun name ->
-        if context.[depth + 1] then
+        //                                   is in dict
+        //                                   |     value of key `depth + 1`
+        if context.TryGetValue(depth + 1) = (true, true) then
             context.Remove (depth + 1) |> ignore
 
         depth <- depth - 1

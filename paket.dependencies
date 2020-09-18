@@ -1,6 +1,6 @@
-version 5.206.0
+version 5.249.0
 
-source https://www.nuget.org/api/v2
+source https://api.nuget.org/v3/index.json
 
 storage: none
 
@@ -19,14 +19,13 @@ nuget Fable.FontAwesome
 nuget Fable.FontAwesome.Free
 nuget Thoth.Json
 
-github fable-compiler/ts2fable-exports:2ef3f0144570d6b963f69c08143357b95a5168cb Monaco.fs
+github fable-compiler/repl:3dbe5f390049144aaaed5eec734282168c246df0 src/App/Libs/Monaco.fs
 
 group netcorebuild
     storage:none
-    source https://www.nuget.org/api/v2
+    source https://api.nuget.org/v3/index.json
     framework: netstandard2.0
 
-    clitool dotnet-fake
     nuget NETStandard.Library.NETFramework
     nuget Fake.DotNet.Cli
     nuget Fake.DotNet.Paket
