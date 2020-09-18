@@ -16,7 +16,8 @@ var babelOptions = {
                 "browsers": ["last 2 versions"]
             },
             "modules": false,
-            "useBuiltIns": "usage"
+            "useBuiltIns": "usage",
+            "corejs": 3,
         }],
         "@babel/react"
     ],
@@ -53,8 +54,8 @@ var commonPlugins = [
             'find',
             // 'folding',
             // 'format',
-            'gotoDeclarationCommands',
-            'gotoDeclarationMouse',
+            // 'gotoDeclarationCommands',
+            // 'gotoDeclarationMouse',
             'gotoError',
             'gotoLine',
             'hover',
