@@ -1,3 +1,7 @@
+### 2.1.0
+
+- Upgrade to latest stable Fable (by @Booksbaum)
+
 ### 2.0.0
 
 - Upgrade to Fable 2

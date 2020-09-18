@@ -135,8 +135,14 @@ let pushNuget (releaseNotes: ReleaseNotes.ReleaseNotes) (projFile: string) =
         Directory.GetFiles(projDir </> "bin" </> "Release", "*.nupkg")
         |> Array.find (fun nupkg -> nupkg.Contains(releaseNotes.NugetVersion))
         |> (fun nupkg ->
-            Paket.push (fun p -> { p with ApiKey = nugetKey
-                                          WorkingDir = Path.getDirectory nupkg }))
+            let wd = Path.getDirectory nupkg
+            let args =
+                sprintf "push %s -s nuget.org -k %s" nupkg nugetKey
+            let res = DotNet.exec (DotNet.Options.withWorkingDirectory wd) "nuget" args
+
+            if not res.OK then
+                failwithf "paket failed to start: %A" res
+        )
 
 Target.create "PublishNugets" (fun _ ->
     !! "./src/HtmlConverter/Fable.HtmlConverter.fsproj"

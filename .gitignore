@@ -10,3 +10,5 @@ src/WebApp/public/
 packages/
 paket-files/
 tests/dist/
+
+.ionide/
