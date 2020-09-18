@@ -93,13 +93,13 @@ module.exports = function(env, argv) {
         entry: isProduction ? // We don't use the same entry for dev and production, to make HMR over style quicker for dev env
             {
                 app: [
-                    "@babel/polyfill",
+                    "core-js",
                     resolve('HtmlToElmish.fsproj'),
                     resolve('sass/main.scss')
                 ]
             } : {
                 app: [
-                    "@babel/polyfill",
+                    "core-js",
                     resolve('HtmlToElmish.fsproj')
                 ],
                 style: [
