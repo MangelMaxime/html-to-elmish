@@ -17,7 +17,7 @@ var babelOptions = {
             },
             "modules": false,
             "useBuiltIns": "usage",
-            "corejs": 3,
+            "corejs": "3.6",
         }],
         "@babel/react"
     ],
@@ -93,13 +93,11 @@ module.exports = function(env, argv) {
         entry: isProduction ? // We don't use the same entry for dev and production, to make HMR over style quicker for dev env
             {
                 app: [
-                    "core-js",
                     resolve('HtmlToElmish.fsproj'),
                     resolve('sass/main.scss')
                 ]
             } : {
                 app: [
-                    "core-js",
                     resolve('HtmlToElmish.fsproj')
                 ],
                 style: [

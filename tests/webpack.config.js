@@ -14,7 +14,7 @@ var babelOptions = {
             },
             "modules": false,
             "useBuiltIns": "usage",
-            "corejs": 3,
+            "corejs": "3.6",
         }],
     ],
     "plugins": [
