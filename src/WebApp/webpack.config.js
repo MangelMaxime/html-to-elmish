@@ -122,7 +122,8 @@ module.exports = function(env, argv) {
                         chunks: 'all'
                     }
                 }
-            }
+            },
+            moduleIds: isProduction ? undefined : "named",
         },
         plugins: isProduction ?
             commonPlugins.concat([
@@ -140,7 +141,6 @@ module.exports = function(env, argv) {
             ])
             : commonPlugins.concat([
                 new webpack.HotModuleReplacementPlugin(),
-                new webpack.NamedModulesPlugin()
             ]),
         resolve: {
             modules: [
