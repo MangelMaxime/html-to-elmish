@@ -16,7 +16,8 @@ var babelOptions = {
                 "browsers": ["last 2 versions"]
             },
             "modules": false,
-            "useBuiltIns": "usage"
+            "useBuiltIns": "usage",
+            "corejs": "3.6",
         }],
         "@babel/react"
     ],
@@ -53,8 +54,8 @@ var commonPlugins = [
             'find',
             // 'folding',
             // 'format',
-            'gotoDeclarationCommands',
-            'gotoDeclarationMouse',
+            // 'gotoDeclarationCommands',
+            // 'gotoDeclarationMouse',
             'gotoError',
             'gotoLine',
             'hover',
@@ -92,13 +93,11 @@ module.exports = function(env, argv) {
         entry: isProduction ? // We don't use the same entry for dev and production, to make HMR over style quicker for dev env
             {
                 app: [
-                    "@babel/polyfill",
                     resolve('HtmlToElmish.fsproj'),
                     resolve('sass/main.scss')
                 ]
             } : {
                 app: [
-                    "@babel/polyfill",
                     resolve('HtmlToElmish.fsproj')
                 ],
                 style: [
@@ -123,7 +122,8 @@ module.exports = function(env, argv) {
                         chunks: 'all'
                     }
                 }
-            }
+            },
+            moduleIds: isProduction ? undefined : "named",
         },
         plugins: isProduction ?
             commonPlugins.concat([
@@ -141,7 +141,6 @@ module.exports = function(env, argv) {
             ])
             : commonPlugins.concat([
                 new webpack.HotModuleReplacementPlugin(),
-                new webpack.NamedModulesPlugin()
             ]),
         resolve: {
             modules: [
@@ -182,7 +181,13 @@ module.exports = function(env, argv) {
                     use: [
                         isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
                         'css-loader',
-                        'sass-loader',
+                        {
+                            loader: 'sass-loader',
+                            options: {
+                            // Prefer `dart-sass`
+                            implementation: require('sass'),
+                            },
+                        },
                     ],
                 },
                 {

@@ -11,8 +11,8 @@ $fa-font-path: "./../../../node_modules/@fortawesome/fontawesome-free/webfonts";
 $body-size: 14px;
 
 @import './../../../node_modules/bulma/bulma';
-@import './../../../node_modules/bulma-pageloader/dist/css/bulma-pageloader';
-@import './../../../node_modules/bulma-tooltip/dist/css/bulma-tooltip';
+@import './../../../node_modules/bulma-pageloader';
+@import './../../../node_modules/bulma-tooltip';
 
 html {
     overflow-y: hidden;
