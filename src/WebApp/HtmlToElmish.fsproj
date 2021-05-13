@@ -4,15 +4,24 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\paket-files\fable-compiler\repl\src\App\Libs\Monaco.fs">
-      <Paket>True</Paket>
-      <Link>paket-files/Monaco.fs</Link>
-    </Compile>
-    <ProjectReference Include="./../HtmlConverter/Fable.HtmlConverter.fsproj" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="Libs/Monaco.fs" />
     <Compile Include="Samples.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
+  <ItemGroup>
+    <PackageReference Include="Fable.Core" Version="3.2.6" />
+    <PackageReference Include="Fable.Elmish" Version="3.1.0" />
+    <PackageReference Include="Fable.Elmish.Browser" Version="3.0.4" />
+    <PackageReference Include="Fable.Elmish.Debugger" Version="3.2.0" />
+    <PackageReference Include="Fable.Elmish.Hmr" Version="4.1.0" />
+    <PackageReference Include="Fable.Elmish.React" Version="3.0.1" />
+    <PackageReference Include="Fable.FontAwesome" Version="2.0.0" />
+    <PackageReference Include="Fable.FontAwesome.Free" Version="2.1.0" />
+    <PackageReference Include="Feliz" Version="1.44.0" />
+    <PackageReference Include="Feliz.Bulma" Version="2.15.0" />
+    <PackageReference Include="Feliz.Bulma.PageLoader" Version="2.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HtmlConverter\Fable.HtmlConverter.fsproj" />
+  </ItemGroup>
 </Project>

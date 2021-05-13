@@ -12,3 +12,5 @@ paket-files/
 tests/dist/
 
 .ionide/
+.fable/
+fableBuild/

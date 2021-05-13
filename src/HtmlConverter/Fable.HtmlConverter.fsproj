@@ -1,11 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Html to Elmish converter</Description>
-    <PackageProjectUrl>https://github.com/MangelMaxime/Html-to-Elmish</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/MangelMaxime/Html-to-Elmish/blob/master/LICENSE.md</PackageLicenseUrl>
-    <RepositoryUrl>https://github.com/MangelMaxime/Html-to-Elmish</RepositoryUrl>
-    <PackageTags>fable;fsharp</PackageTags>
-    <Authors>Maxime Mangel</Authors>
+    <PackageTags>fable;fsharp;elmish</PackageTags>
     <Version>2.1.0</Version>
   </PropertyGroup>
   <PropertyGroup>
@@ -17,7 +13,7 @@
     <Compile Include="Converter.fs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="*.fsproj; **\*.fs" PackagePath="fable\" />
+    <PackageReference Include="Fable.Core" Version="3.2.6" />
+    <PackageReference Include="Thoth.Json" Version="4.1.0" />
   </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

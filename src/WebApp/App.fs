@@ -7,9 +7,9 @@ open Fable.React.Props
 open Fable.FontAwesome
 open Monaco
 open HtmlConverter.Converter
-open Fulma
-open Fulma.Extensions.Wikiki
-
+// open Fulma
+// open Fulma.Extensions.Wikiki
+open Feliz
 type EditorState =
     | Loading
     | Loaded
@@ -91,79 +91,80 @@ module CopyButton =
     let inline copyButtton (props: Props list) : ReactElement =
         ofImport "default" "./js/CopyButton.js" (keyValueList CaseRules.LowerFirst props) []
 
-let private navbarItem (text : string) (sampleCode : string) dispatch =
-    Navbar.Item.a [ Navbar.Item.Props [ OnClick (fun _ -> OnHtmlChange sampleCode |> dispatch)] ]
-        [ str text ]
+// let private navbarItem (text : string) (sampleCode : string) dispatch =
+//     Navbar.Item.a [ Navbar.Item.Props [ OnClick (fun _ -> OnHtmlChange sampleCode |> dispatch)] ]
+//         [ str text ]
 
-let private navbar dispatch =
-    Navbar.navbar [ Navbar.IsFixedTop ]
-        [ Navbar.Brand.div [ ]
-            [ Navbar.Item.a [ ]
-                [ strong [ ]
-                    [ str "Html to Elmish" ] ] ]
-          Navbar.Start.div [ ]
-            [ Navbar.Item.div [ Navbar.Item.HasDropdown
-                                Navbar.Item.IsHoverable ]
-                [ Navbar.Link.a [ ]
-                    [ str "Samples" ]
-                  Navbar.Dropdown.div [ ]
-                    [ navbarItem "Hello world" Samples.helloWorld dispatch
-                      navbarItem "Bootstrap: Navbar" Samples.boostrapNavbar dispatch
-                      navbarItem "Fulma: Box" Samples.fulmaBox dispatch
-                      navbarItem "Fulma: Media Object" Samples.fulmaMediaObject dispatch
-                      navbarItem "Foundation: Top Bar" Samples.foundationTopBar dispatch ] ] ]
-          Navbar.End.div [ ]
-            [ Navbar.Item.div [ ]
-                [ Button.a [ Button.Props [ Href "https://github.com/MangelMaxime/html-to-elmish" ]
-                             Button.Color IsDark ]
-                    [ Icon.icon [ ]
-                        [ Fa.i [ Fa.Brand.Github ]
-                            [ ] ]
-                      span [ ]
-                        [ str "Github" ] ] ] ] ]
+// let private navbar dispatch =
+//     Navbar.navbar [ Navbar.IsFixedTop ]
+//         [ Navbar.Brand.div [ ]
+//             [ Navbar.Item.a [ ]
+//                 [ strong [ ]
+//                     [ str "Html to Elmish" ] ] ]
+//           Navbar.Start.div [ ]
+//             [ Navbar.Item.div [ Navbar.Item.HasDropdown
+//                                 Navbar.Item.IsHoverable ]
+//                 [ Navbar.Link.a [ ]
+//                     [ str "Samples" ]
+//                   Navbar.Dropdown.div [ ]
+//                     [ navbarItem "Hello world" Samples.helloWorld dispatch
+//                       navbarItem "Bootstrap: Navbar" Samples.boostrapNavbar dispatch
+//                       navbarItem "Fulma: Box" Samples.fulmaBox dispatch
+//                       navbarItem "Fulma: Media Object" Samples.fulmaMediaObject dispatch
+//                       navbarItem "Foundation: Top Bar" Samples.foundationTopBar dispatch ] ] ]
+//           Navbar.End.div [ ]
+//             [ Navbar.Item.div [ ]
+//                 [ Button.a [ Button.Props [ Href "https://github.com/MangelMaxime/html-to-elmish" ]
+//                              Button.Color IsDark ]
+//                     [ Icon.icon [ ]
+//                         [ Fa.i [ Fa.Brand.Github ]
+//                             [ ] ]
+//                       span [ ]
+//                         [ str "Github" ] ] ] ] ]
 
 let view (model :Model) (dispatch : Dispatch<Msg>) =
+    Html.text "dzhiudhzid"
 
-    let isLoading =
-        match model with
-        | { HtmlEditorState = Loading; FSharpEditorState = Loading } -> true
-        | _ -> false
+    // let isLoading =
+    //     match model with
+    //     | { HtmlEditorState = Loading; FSharpEditorState = Loading } -> true
+    //     | _ -> false
 
-    div [ ]
-        [ navbar dispatch
-          div [ Class "page-content" ]
-            [ PageLoader.pageLoader [ PageLoader.IsActive isLoading
-                                      PageLoader.Color IsWhite ]
-                [ span [ Class "title" ]
-                    [ str "We are getting everything ready for you" ] ]
-              Columns.columns [ Columns.IsGapless
-                                Columns.IsMultiline ]
-                [ Column.column [ Column.Width(Screen.All, Column.IsHalf) ]
-                    [ Message.message [ ]
-                        [ Message.body [ ]
-                            [ Text.div [ Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
-                                [ str "Type or paste HTML code" ] ] ] ]
-                  Column.column [ Column.Width(Screen.All, Column.IsHalf) ]
-                    [ Message.message [ ]
-                        [ Message.body [ ]
-                            [ Text.div [ Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
-                                [ str "F# code compatible with Elmish" ] ] ] ] ]
-              Columns.columns [ Columns.IsGapless
-                                Columns.IsMultiline
-                                Columns.Props [ Style [ Height "100%" ] ] ]
-                [ Column.column [ Column.Width(Screen.All, Column.IsHalf) ]
-                    [ Editor.editor [ Editor.OnChange (OnHtmlChange >> dispatch)
-                                      Editor.Value model.HtmlCode
-                                      Editor.EditorDidMount (fun _ -> dispatch HtmlEditorLoaded) ] ]
-                  Column.column [ Column.Width(Screen.All, Column.IsHalf) ]
-                    [ div [ Class "copy-button" ]
-                        [ CopyButton.copyButtton [ CopyButton.Value model.FSharpCode ] ]
-                      Editor.editor [ Editor.Language "fsharp"
-                                      Editor.IsReadOnly true
-                                      Editor.Value model.FSharpCode
-                                      Editor.EditorDidMount (fun _ -> dispatch FSharpEditorLoaded) ] ] ]
-            ]
-        ]
+    // div [ ]
+    //     [ navbar dispatch
+    //       div [ Class "page-content" ]
+    //         [ PageLoader.pageLoader [ PageLoader.IsActive isLoading
+    //                                   PageLoader.Color IsWhite ]
+    //             [ span [ Class "title" ]
+    //                 [ str "We are getting everything ready for you" ] ]
+    //           Columns.columns [ Columns.IsGapless
+    //                             Columns.IsMultiline ]
+    //             [ Column.column [ Column.Width(Screen.All, Column.IsHalf) ]
+    //                 [ Message.message [ ]
+    //                     [ Message.body [ ]
+    //                         [ Text.div [ Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
+    //                             [ str "Type or paste HTML code" ] ] ] ]
+    //               Column.column [ Column.Width(Screen.All, Column.IsHalf) ]
+    //                 [ Message.message [ ]
+    //                     [ Message.body [ ]
+    //                         [ Text.div [ Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
+    //                             [ str "F# code compatible with Elmish" ] ] ] ] ]
+    //           Columns.columns [ Columns.IsGapless
+    //                             Columns.IsMultiline
+    //                             Columns.Props [ Style [ Height "100%" ] ] ]
+    //             [ Column.column [ Column.Width(Screen.All, Column.IsHalf) ]
+    //                 [ Editor.editor [ Editor.OnChange (OnHtmlChange >> dispatch)
+    //                                   Editor.Value model.HtmlCode
+    //                                   Editor.EditorDidMount (fun _ -> dispatch HtmlEditorLoaded) ] ]
+    //               Column.column [ Column.Width(Screen.All, Column.IsHalf) ]
+    //                 [ div [ Class "copy-button" ]
+    //                     [ CopyButton.copyButtton [ CopyButton.Value model.FSharpCode ] ]
+    //                   Editor.editor [ Editor.Language "fsharp"
+    //                                   Editor.IsReadOnly true
+    //                                   Editor.Value model.FSharpCode
+    //                                   Editor.EditorDidMount (fun _ -> dispatch FSharpEditorLoaded) ] ] ]
+    //         ]
+    //     ]
 
 open Elmish.React
 open Elmish.HMR

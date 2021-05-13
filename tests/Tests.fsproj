@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="../src/HtmlConverter/Fable.HtmlConverter.fsproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="QUnit.fs" />
-    <Compile Include="Tests.HtmlConverter.fs" />
-    <Compile Include="Main.fs" />
-  </ItemGroup>
-  <Import Project="..\.paket\Paket.Restore.targets" />
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="../src/HtmlConverter/Fable.HtmlConverter.fsproj" />
+	</ItemGroup>
+	<ItemGroup>
+        <Compile Include="Mocha.fs" />
+        <Compile Include="Node.Assert.fs" />
+        <Compile Include="Globals.fs" />
+		<Compile Include="HtmlConverter.EscapeValue.fs" />
+        <Compile Include="HtmlConverter.AttributesToString.fs" />
+        <Compile Include="HtmlConverter.React.fs" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Fable.Core" Version="3.2.6" />
+		<PackageReference Include="Fable.Node" Version="1.2.0" />
+		<PackageReference Include="Thoth.Json" Version="4.1.0" />
+	</ItemGroup>
 </Project>
