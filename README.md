@@ -1,5 +1,6 @@
 # Html to Elmish [![Build Status](https://dev.azure.com/MangelMaximeGithub/html-to-elmish/_apis/build/status/MangelMaxime.html-to-elmish?branchName=master)](https://dev.azure.com/MangelMaximeGithub/html-to-elmish/_build/latest?definitionId=1&branchName=master)
 
+**As an OpenSource maintainer, my time is limited for this reason, this project is now consider completed. Only bugs will now be fixed**
 
 ## How to build ?
 
