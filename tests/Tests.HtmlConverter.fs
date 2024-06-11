@@ -10,12 +10,12 @@ let private toUnixNewLine (s: string) =
 type Asserter with
     member test.deepEqualIgnoreNewLineSeparator (a: string list) (b: string list) =
         let aUnix = a |> List.map toUnixNewLine
-        let bUnix = a |> List.map toUnixNewLine
+        let bUnix = b |> List.map toUnixNewLine
         test.deepEqual aUnix bUnix
 
     member test.equalIgnoreNewLineSeparator (a: string) (b: string) =
         let aUnix = a |> toUnixNewLine
-        let bUnix = a |> toUnixNewLine
+        let bUnix = b |> toUnixNewLine
         test.equal aUnix bUnix
 
 let tests _ =
