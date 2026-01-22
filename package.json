@@ -41,7 +41,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.11.2",
+    "@babel/runtime": "^7.26.10",
     "bulma": "^0.9.0",
     "htmlparser2": "^5.0.1",
     "react": "^16.13.1",
